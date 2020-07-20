@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name macr0)(type Legacy)(uri ${KIPRJMOD}/macr0.lib)(options "")(descr ""))
+)
