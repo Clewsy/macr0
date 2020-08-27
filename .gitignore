@@ -1,0 +1,8 @@
+firmware/*.bin
+firmware/*.eep
+firmware/*.elf
+firmware/*.hex
+firmware/*.lss
+firmware/*.map
+firmware/*.sym
+firmware/obj
