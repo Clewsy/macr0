@@ -32,7 +32,7 @@ include $(DMBS_LUFA_PATH)/lufa-sources.mk
 include $(DMBS_LUFA_PATH)/lufa-gcc.mk
 
 # Include common DMBS build system modules
-DMBS_PATH      ?= $(LUFA_PATH)/Build/DMBS/DMBS
+DMBS_PATH ?= $(LUFA_PATH)/Build/DMBS/DMBS
 include $(DMBS_PATH)/core.mk
 include $(DMBS_PATH)/cppcheck.mk
 include $(DMBS_PATH)/doxygen.mk

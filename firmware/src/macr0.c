@@ -1,39 +1,3 @@
-/*
-             LUFA Library
-     Copyright (C) Dean Camera, 2018.
-
-  dean [at] fourwalledcubicle [dot] com
-           www.lufa-lib.org
-*/
-
-/*
-  Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
-
-  Permission to use, copy, modify, distribute, and sell this
-  software and its documentation for any purpose is hereby granted
-  without fee, provided that the above copyright notice appear in
-  all copies and that both that the copyright notice and this
-  permission notice and warranty disclaimer appear in supporting
-  documentation, and that the name of the author not be used in
-  advertising or publicity pertaining to distribution of the
-  software without specific, written prior permission.
-
-  The author disclaims all warranties with regard to this
-  software, including all implied warranties of merchantability
-  and fitness.  In no event shall the author be liable for any
-  special, indirect or consequential damages or any damages
-  whatsoever resulting from loss of use, data or profits, whether
-  in an action of contract, negligence or other tortious action,
-  arising out of or in connection with the use or performance of
-  this software.
-*/
-
-/** \file
- *
- *  Main source file for the Keyboard demo. This file contains the main tasks of
- *  the demo and is responsible for the initial application hardware configuration.
- */
-
 #include "macr0.h"
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
@@ -44,20 +8,20 @@ static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
  *  within a device can be differentiated from one another.
  */
 USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
-	{
-		.Config =
-			{
-				.InterfaceNumber              = INTERFACE_ID_Keyboard,
-				.ReportINEndpoint             =
-					{
-						.Address              = KEYBOARD_EPADDR,
-						.Size                 = KEYBOARD_EPSIZE,
-						.Banks                = 1,
-					},
-				.PrevReportINBuffer           = PrevKeyboardHIDReportBuffer,
-				.PrevReportINBufferSize       = sizeof(PrevKeyboardHIDReportBuffer),
-			},
-	};
+{
+	.Config =
+		{
+			.InterfaceNumber              = INTERFACE_ID_Keyboard,
+			.ReportINEndpoint             =
+				{
+					.Address              = KEYBOARD_EPADDR,
+					.Size                 = KEYBOARD_EPSIZE,
+					.Banks                = 1,
+				},
+			.PrevReportINBuffer           = PrevKeyboardHIDReportBuffer,
+			.PrevReportINBufferSize       = sizeof(PrevKeyboardHIDReportBuffer),
+		},
+};
 
 /** Main program entry point. This routine contains the overall program flow, including initial
  *  setup of all components and the main program loop.
@@ -86,7 +50,7 @@ int main(void)
 	SendKey(NO_KEY, NO_MODIFIER);
 	_delay_ms(STARTUP_DELAY_MS);
 
-	LEDS_SetAllLEDS(LEDMASK_RUNNING);	//Indicate that the device is ready and running the keystroke entry.
+//	LEDS_SetAllLEDS(LEDMASK_RUNNING);	//Indicate that the device is ready and running the keystroke entry.
 
 	while(1)	//Infinite loop.
 	{
@@ -102,7 +66,7 @@ int main(void)
 				}
 			}
 			ready = FALSE;				//Once string typing has looped the defined number of times, flag that it's done.
-			LEDS_SetAllLEDS(LEDMASK_DONE);		//Indicate the the device is done.
+//			LEDS_SetAllLEDS(LEDMASK_DONE);		//Indicate the the device is done.
 		}
 
 		SendKey(NO_KEY, NO_MODIFIER);	//Infinite loop will continue to send no-key events so that the host continues to recognise it as a keyboard.
@@ -111,11 +75,11 @@ int main(void)
 
 //This function effectively sends a keystroke by defining the key and modifier then calling the LUFA routines.
 //Note, this must be called (more accurately, the LUFA routines must be called) regularly otherwise the HOST connection will fail.
-//In this imp[lementation, only a single standard key and a single modifier can be "pressed" simultaneously.
+//In this implementation, only a single standard key and a single modifier can be "pressed" simultaneously.
 void SendKey(uint8_t k, uint8_t m)
 {
 	type_key = k;					//Set the global variable k indicating the key to be "pressed" (refer to LUFA file HIDClassCommon.h).
-	type_modifier = m;				//Set the global variable k indicating the modifier to be "pressed".
+	type_modifier = m;				//Set the global variable m indicating the modifier to be "pressed".
 	HID_Device_USBTask(&Keyboard_HID_Interface);	//LUFA defined function.
 	USB_USBTask();					//LUFA defined function.
 	_delay_ms(KEY_DELAY_MS);			//Minimum delay implemented to avoid missed "keystrokes".
@@ -205,24 +169,44 @@ void SetupHardware()
 
 	/* Hardware Initialization */
 //	Joystick_Init();
-	LEDS_Init();
+//	LEDS_Init();
 //	Buttons_Init();
+cat4104_init();
+dimmer_init();
+dimmer_enable();
 	USB_Init();
 
 
 
 }
 
+
+uint8_t dim_value = 0;
+ISR(DIMMER_PCI_VECTOR)
+{
+	_delay_ms(20);	// Button de-bounce.
+
+	if(dimmer_check())
+	{
+		dim_value += 50;
+		if(dim_value == 250) dim_value = 0;
+
+		cat4104_set(dim_value);
+
+		while(dimmer_check()) {}	// Wait until the button is released.
+	}
+}
+
 /** Event handler for the library USB Connection event. */
 void EVENT_USB_Device_Connect(void)
 {
-	LEDS_SetAllLEDS(LEDMASK_USB_ENUMERATING);
+//	LEDS_SetAllLEDS(LEDMASK_USB_ENUMERATING);
 }
 
 /** Event handler for the library USB Disconnection event. */
 void EVENT_USB_Device_Disconnect(void)
 {
-	LEDS_SetAllLEDS(LEDMASK_USB_NOTREADY);
+//	LEDS_SetAllLEDS(LEDMASK_USB_NOTREADY);
 }
 
 /** Event handler for the library USB Configuration Changed event. */
@@ -237,12 +221,12 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 //	LEDS_SetAllLEDS(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
 	if(ConfigSuccess)
 	{
-		LEDS_SetAllLEDS(LEDMASK_USB_READY);
+//		LEDS_SetAllLEDS(LEDMASK_USB_READY);
 		ready = TRUE;
 	}
 	else
 	{
-		LEDS_SetAllLEDS(LEDMASK_USB_ERROR);
+//		LEDS_SetAllLEDS(LEDMASK_USB_ERROR);
 	}
 }
 

@@ -6,3 +6,4 @@ firmware/*.lss
 firmware/*.map
 firmware/*.sym
 firmware/obj
+firmware/lib/LUFA

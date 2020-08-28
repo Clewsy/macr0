@@ -57,7 +57,8 @@
 
 		#include "Descriptors.h"
 		#include "The_String.h"
-		#include "LEDs.h"
+#include "cat4104.h"
+#include "dimmer.h"
 
 	/* Macros: */
 		/** LED mask for the library LED driver, to indicate that the USB interface is not ready. */
