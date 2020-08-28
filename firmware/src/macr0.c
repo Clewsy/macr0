@@ -52,25 +52,76 @@ int main(void)
 
 //	LEDS_SetAllLEDS(LEDMASK_RUNNING);	//Indicate that the device is ready and running the keystroke entry.
 
+while(!ready) {}
+
 	while(1)	//Infinite loop.
 	{
-		if(ready)	//This will only happen once on powerup, when the device is successfully enumerated.
+//		if(ready)	//This will only happen once on powerup, when the device is successfully enumerated.
+//		{
+//			for(uint8_t j = 0; j < REPEAT; j++)					//Loop the string entry a defined number of times.
+//			{
+//				for(uint8_t i = 0; i < sizeof(string); i++)			//Loop for every character within the defined string.
+//				{
+//					SendKey(CharToKey(string[i]), CheckShift(string[i]));	//For each character, send the keystrokes to recreate it.
+//					SendKey(NO_KEY, NO_MODIFIER);				//Send a no-key after every key to emulate releasing the key.
+//												//(This is needed to capture double letters or repeated chars.)
+//				}
+//			}
+//			ready = FALSE;				//Once string typing has looped the defined number of times, flag that it's done.
+//		}
+
+		SendKey(CharToKey(get_key()), NO_MODIFIER);	//Infinite loop will continue to send no-key events so that the host continues to recognise it as a keyboard.
+	}
+}
+
+#define KEYS_PORT	PORTD
+#define KEYS_PINS	PIND
+#define KEYS_DDR	DDRD
+#define ROW_1		PD0
+#define ROW_2		PD1
+#define COL_1		PD2
+#define COL_2		PD3
+
+
+void keys_init(void)
+{
+	// Set rows as outputs.
+	KEYS_DDR |= ((1 << ROW_1) | (1 << ROW_2));
+
+	// Set columns as inputs and enable pull-ups.
+	KEYS_DDR &= ~((1 << COL_1) | (1 << COL_2));
+	KEYS_PORT |= ((1 << COL_1) | (1 << COL_2));
+
+//KEYS_PORT &= ~((1 << ROW_1) | (1 << ROW_2));
+KEYS_PORT |= ((1 << ROW_1) | (1 << ROW_2));
+
+}
+
+char get_key(void)
+{
+	uint8_t col_array[2] = {COL_1, COL_2};
+	uint8_t row_array[2] = {ROW_1, ROW_2};
+
+	for(uint8_t r = 0; r < 2; r++)
+	{
+		KEYS_PORT &= ~(1 << row_array[r]);	// Set low current row (enable check).
+
+		while(!(~KEYS_PINS & (1 << row_array[r]))) {}	// Wait until row is set low before continueing, otherwise column checks can be missed.
+
+		for(uint8_t c = 0; c < 2; c++)
 		{
-			for(uint8_t j = 0; j < REPEAT; j++)					//Loop the string entry a defined number of times.
+			if(~KEYS_PINS & (1 << col_array[c]))
 			{
-				for(uint8_t i = 0; i < sizeof(string); i++)			//Loop for every character within the defined string.
-				{
-					SendKey(CharToKey(string[i]), CheckShift(string[i]));	//For each character, send the keystrokes to recreate it.
-					SendKey(NO_KEY, NO_MODIFIER);				//Send a no-key after every key to emulate releasing the key.
-												//(This is needed to capture double letters or repeated chars.)
-				}
+				KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
+				return('a' + (2*r) + c);
 			}
-			ready = FALSE;				//Once string typing has looped the defined number of times, flag that it's done.
-//			LEDS_SetAllLEDS(LEDMASK_DONE);		//Indicate the the device is done.
 		}
 
-		SendKey(NO_KEY, NO_MODIFIER);	//Infinite loop will continue to send no-key events so that the host continues to recognise it as a keyboard.
+
+		KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
 	}
+
+	return(NO_KEY);
 }
 
 //This function effectively sends a keystroke by defining the key and modifier then calling the LUFA routines.
@@ -174,6 +225,7 @@ void SetupHardware()
 cat4104_init();
 dimmer_init();
 dimmer_enable();
+keys_init();
 	USB_Init();
 
 
