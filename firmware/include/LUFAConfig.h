@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2018.
+     Copyright (C) Dean Camera, 2020.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2020  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -114,7 +114,7 @@
 //		#define DEVICE_STATE_AS_GPIOR            {Insert Value Here}
 		#define FIXED_NUM_CONFIGURATIONS         1
 //		#define CONTROL_ONLY_DEVICE
-		#define MAX_ENDPOINT_INDEX               1
+		#define MAX_ENDPOINT_INDEX               2
 //		#define NO_DEVICE_REMOTE_WAKEUP
 //		#define NO_DEVICE_SELF_POWER
 

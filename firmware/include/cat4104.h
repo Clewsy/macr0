@@ -20,6 +20,8 @@
 #define PWM_CS2		CS42		// Clock Select Bit 2
 #define PWM_CS3		CS43		// Clock Select Bit 3
 
+#define PWM_INIT_VAL	255		// Initial duty cycle value.
+
 // Function prototypes.
 void cat4104_init(void);
 void cat4104_set(uint8_t duty);

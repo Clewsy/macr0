@@ -1,13 +1,14 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2018.
+     Copyright (C) Dean Camera, 2020.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2020  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2010  Denver Gingerich (denver [at] ossguy [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -37,9 +38,9 @@
 #define _DESCRIPTORS_H_
 
 	/* Includes: */
-		#include <avr/pgmspace.h>
-
 		#include <LUFA/Drivers/USB/USB.h>
+
+		#include <avr/pgmspace.h>
 
 	/* Type Defines: */
 		/** Type define for the device configuration descriptor structure. This must be defined in the
@@ -54,6 +55,7 @@
 			USB_Descriptor_Interface_t            HID_Interface;
 			USB_HID_Descriptor_HID_t              HID_KeyboardHID;
 			USB_Descriptor_Endpoint_t             HID_ReportINEndpoint;
+			USB_Descriptor_Endpoint_t             HID_ReportOUTEndpoint;
 		} USB_Descriptor_Configuration_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
@@ -78,10 +80,13 @@
 
 	/* Macros: */
 		/** Endpoint address of the Keyboard HID reporting IN endpoint. */
-		#define KEYBOARD_EPADDR              (ENDPOINT_DIR_IN | 1)
+		#define KEYBOARD_IN_EPADDR        (ENDPOINT_DIR_IN  | 1)
 
-		/** Size in bytes of the Keyboard HID reporting IN endpoint. */
-		#define KEYBOARD_EPSIZE              8
+		/** Endpoint address of the Keyboard HID reporting OUT endpoint. */
+		#define KEYBOARD_OUT_EPADDR       (ENDPOINT_DIR_OUT | 2)
+
+		/** Size in bytes of the Keyboard HID reporting IN and OUT endpoints. */
+		#define KEYBOARD_EPSIZE           8
 
 	/* Function Prototypes: */
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,

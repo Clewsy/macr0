@@ -1,13 +1,14 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2018.
+     Copyright (C) Dean Camera, 2020.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2020  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2010  Denver Gingerich (denver [at] ossguy [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -45,10 +46,38 @@
  */
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardReport[] =
 {
-	/* Use the HID class driver's standard Keyboard report.
-	 *   Max simultaneous keys: 6
-	 */
-	HID_DESCRIPTOR_KEYBOARD(6)
+	HID_RI_USAGE_PAGE(8, 0x01), /* Generic Desktop */
+	HID_RI_USAGE(8, 0x06), /* Keyboard */
+	HID_RI_COLLECTION(8, 0x01), /* Application */
+		HID_RI_USAGE_PAGE(8, 0x07), /* Key Codes */
+		HID_RI_USAGE_MINIMUM(8, 0xE0), /* Keyboard Left Control */
+		HID_RI_USAGE_MAXIMUM(8, 0xE7), /* Keyboard Right GUI */
+		HID_RI_LOGICAL_MINIMUM(8, 0x00),
+		HID_RI_LOGICAL_MAXIMUM(8, 0x01),
+		HID_RI_REPORT_SIZE(8, 0x01),
+		HID_RI_REPORT_COUNT(8, 0x08),
+		HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+		HID_RI_REPORT_COUNT(8, 0x01),
+		HID_RI_REPORT_SIZE(8, 0x08),
+		HID_RI_INPUT(8, HID_IOF_CONSTANT),
+		HID_RI_USAGE_PAGE(8, 0x08), /* LEDs */
+		HID_RI_USAGE_MINIMUM(8, 0x01), /* Num Lock */
+		HID_RI_USAGE_MAXIMUM(8, 0x05), /* Kana */
+		HID_RI_REPORT_COUNT(8, 0x05),
+		HID_RI_REPORT_SIZE(8, 0x01),
+		HID_RI_OUTPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE),
+		HID_RI_REPORT_COUNT(8, 0x01),
+		HID_RI_REPORT_SIZE(8, 0x03),
+		HID_RI_OUTPUT(8, HID_IOF_CONSTANT),
+		HID_RI_LOGICAL_MINIMUM(8, 0x00),
+		HID_RI_LOGICAL_MAXIMUM(8, 0x65),
+		HID_RI_USAGE_PAGE(8, 0x07), /* Keyboard */
+		HID_RI_USAGE_MINIMUM(8, 0x00), /* Reserved (no event indicated) */
+		HID_RI_USAGE_MAXIMUM(8, 0x65), /* Keyboard Application */
+		HID_RI_REPORT_COUNT(8, 0x06),
+		HID_RI_REPORT_SIZE(8, 0x08),
+		HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_ARRAY | HID_IOF_ABSOLUTE),
+	HID_RI_END_COLLECTION(0),
 };
 
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
@@ -67,10 +96,8 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.Endpoint0Size          = FIXED_CONTROL_ENDPOINT_SIZE,
 
-//	.VendorID               = 0x03EB,
-//	.ProductID              = 0x2042,
-	.VendorID               = 0xc0ff,
-	.ProductID              = 0xeeee,
+	.VendorID               = 0x03EB,
+	.ProductID              = 0x2042,
 	.ReleaseNumber          = VERSION_BCD(0,0,1),
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
@@ -109,7 +136,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.InterfaceNumber        = INTERFACE_ID_Keyboard,
 			.AlternateSetting       = 0x00,
 
-			.TotalEndpoints         = 1,
+			.TotalEndpoints         = 2,
 
 			.Class                  = HID_CSCP_HIDClass,
 			.SubClass               = HID_CSCP_BootSubclass,
@@ -133,11 +160,21 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = KEYBOARD_EPADDR,
+			.EndpointAddress        = KEYBOARD_IN_EPADDR,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = KEYBOARD_EPSIZE,
 			.PollingIntervalMS      = 0x05
 		},
+
+	.HID_ReportOUTEndpoint =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+
+			.EndpointAddress        = KEYBOARD_OUT_EPADDR,
+			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+			.EndpointSize           = KEYBOARD_EPSIZE,
+			.PollingIntervalMS      = 0x05
+		}
 };
 
 /** Language descriptor structure. This descriptor, located in FLASH memory, is returned when the host requests
@@ -150,13 +187,13 @@ const USB_Descriptor_String_t PROGMEM LanguageString = USB_STRING_DESCRIPTOR_ARR
  *  form, and is read out upon request by the host when the appropriate string ID is requested, listed in the Device
  *  Descriptor.
  */
-const USB_Descriptor_String_t PROGMEM ManufacturerString = USB_STRING_DESCRIPTOR(L"clews.pro");
+const USB_Descriptor_String_t PROGMEM ManufacturerString = USB_STRING_DESCRIPTOR(L"LUFA Library");
 
 /** Product descriptor string. This is a Unicode string containing the product's details in human readable form,
  *  and is read out upon request by the host when the appropriate string ID is requested, listed in the Device
  *  Descriptor.
  */
-const USB_Descriptor_String_t PROGMEM ProductString = USB_STRING_DESCRIPTOR(L"macr0");
+const USB_Descriptor_String_t PROGMEM ProductString = USB_STRING_DESCRIPTOR(L"LUFA Keyboard Demo");
 
 /** This function is called by the library when in device mode, and must be overridden (see library "USB Descriptors"
  *  documentation) by the application code so that the address and size of a requested descriptor can be given
