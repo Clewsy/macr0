@@ -3,9 +3,9 @@
 # Modified from a typical makefile in Dean Camera's LUFA library.
 # https://github.com/abcminiuser/lufa
 
-MCU          = atmega32u4
-F_CPU        = 16000000
-TARGET       = macr0
+MCU		= atmega32u4
+F_CPU		= 16000000
+TARGET		= macr0
 INC_DIR		= ./include
 LIB_DIR		= ./lib
 SRC_DIR		= ./src
@@ -18,19 +18,19 @@ all:
 
 ##############################################################################################
 # Camera has abstracted away a lot of the makefile config with DMBS
-ARCH         = AVR8
-BOARD        = NONE
-F_USB        = $(F_CPU)
-OPTIMIZATION = s
-SRC          += $(LUFA_SRC_USB)
-LUFA_PATH    = $(LIB_DIR)/LUFA
-CC_FLAGS     += -DUSE_LUFA_CONFIG_HEADER
+ARCH		= AVR8
+BOARD		= NONE
+F_USB		= $(F_CPU)
+OPTIMIZATION	= s
+SRC		+= $(LUFA_SRC_USB)
+LUFA_PATH	= $(LIB_DIR)/LUFA
+CC_FLAGS	+= -DUSE_LUFA_CONFIG_HEADER
 # Include LUFA-specific DMBS extension modules
-DMBS_LUFA_PATH ?= $(LUFA_PATH)/Build/LUFA
+DMBS_LUFA_PATH	?= $(LUFA_PATH)/Build/LUFA
 include $(DMBS_LUFA_PATH)/lufa-sources.mk
 include $(DMBS_LUFA_PATH)/lufa-gcc.mk
 # Include common DMBS build system modules
-DMBS_PATH      ?= $(LUFA_PATH)/Build/DMBS/DMBS
+DMBS_PATH	?= $(LUFA_PATH)/Build/DMBS/DMBS
 include $(DMBS_PATH)/core.mk
 include $(DMBS_PATH)/cppcheck.mk
 include $(DMBS_PATH)/doxygen.mk
@@ -42,12 +42,8 @@ include $(DMBS_PATH)/atprogram.mk
 ##############################################################################################
 
 
-
 PROGRAMMER_TYPE = usbtiny
-
-# extra arguments to avrdude: baud rate, chip type, -F flag, etc.
 PROGRAMMER_ARGS =
-
 AVRDUDE = avrdude
 
 program: $(TARGET).hex
