@@ -67,6 +67,27 @@
 		/** LED mask for the library LED driver, to indicate that an error has occurred in the USB interface. */
 		#define LEDMASK_USB_ERROR           (LEDS_LED1 | LEDS_LED3)
 
+/* Type Defines: */
+/** Type define for a Media Control HID report. This report contains the bits to match the usages defined
+ *  in the HID report of the device. When set to a true value, the relevant media controls on the host will
+ *  be triggered.
+ */
+typedef struct
+{
+	unsigned Play           : 1;
+	unsigned Pause          : 1;
+	unsigned FForward       : 1;
+	unsigned Rewind         : 1;
+	unsigned NextTrack      : 1;
+	unsigned PreviousTrack  : 1;
+	unsigned Stop           : 1;
+	unsigned PlayPause      : 1;
+	unsigned Mute           : 1;
+	unsigned VolumeUp       : 1;
+	unsigned VolumeDown     : 1;
+	unsigned RESERVED       : 5;
+} ATTR_PACKED USB_MediaControllerReport_Data_t;
+
 	/* Function Prototypes: */
 		void SetupHardware(void);
 		void HID_Task(void);
@@ -78,9 +99,11 @@
 		void EVENT_USB_Device_StartOfFrame(void);
 
 		void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData);
+		void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaReportData);
 		void ProcessLEDReport(const uint8_t LEDReport);
-		void SendNextReport(void);
-		void ReceiveNextReport(void);
+		void SendNextKeyboardReport(void);
+		void ReceiveNextKeyboardReport(void);
+		void SendNextMediaControllerReport(void);
 
 #endif
 

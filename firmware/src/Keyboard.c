@@ -130,8 +130,10 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	bool ConfigSuccess = true;
 
 	/* Setup HID Report Endpoints */
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(KEYBOARD_IN_EPADDR, EP_TYPE_INTERRUPT, KEYBOARD_EPSIZE, 1);
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(KEYBOARD_OUT_EPADDR, EP_TYPE_INTERRUPT, KEYBOARD_EPSIZE, 1);
+	ConfigSuccess &= Endpoint_ConfigureEndpoint(KEYBOARD_IN_EPADDR, EP_TYPE_INTERRUPT, HID_EPSIZE, 1);
+	ConfigSuccess &= Endpoint_ConfigureEndpoint(KEYBOARD_OUT_EPADDR, EP_TYPE_INTERRUPT, HID_EPSIZE, 1);
+
+	ConfigSuccess &= Endpoint_ConfigureEndpoint(MEDIACONTROLLER_IN_EPADDR, EP_TYPE_INTERRUPT, HID_EPSIZE, 1);
 
 	/* Turn on Start-of-Frame events for tracking HID report period expiry */
 	USB_Device_EnableSOFEvents();
@@ -286,6 +288,32 @@ _delay_ms(4);
 //	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_F;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaReportData)
+{
+
+	/* Clear the report contents */
+	memset(MediaReportData, 0, sizeof(USB_MediaControllerReport_Data_t));
+
+char kee = keyscan_get_keys();
+if (kee == HID_KEYBOARD_SC_VOLUME_DOWN) MediaReportData->VolumeDown = true;
+else if (kee == HID_KEYBOARD_SC_VOLUME_UP) MediaReportData->VolumeUp = true;
+
+	/* Update the Media Control report with the user button presses */
+	MediaReportData->Mute          = false;
+	MediaReportData->PlayPause     = false;
+//	MediaReportData->VolumeUp      = false;
+//	MediaReportData->VolumeDown    = false;
+	MediaReportData->PreviousTrack = false;
+	MediaReportData->NextTrack     = false;
+
+//return false;
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 /** Processes a received LED report, and updates the board LEDs states to match.
  *
@@ -309,7 +337,7 @@ void ProcessLEDReport(const uint8_t LEDReport)
 }
 
 /** Sends the next HID report to the host, via the keyboard data endpoint. */
-void SendNextReport(void)
+void SendNextKeyboardReport(void)
 {
 	static USB_KeyboardReport_Data_t PrevKeyboardReportData;
 	USB_KeyboardReport_Data_t        KeyboardReportData;
@@ -350,8 +378,51 @@ void SendNextReport(void)
 	}
 }
 
+
+/** Sends the next HID report to the host, via the keyboard data endpoint. */
+void SendNextMediaControllerReport(void)
+{
+	static USB_MediaControllerReport_Data_t	PrevMediaControllerReportData;
+	USB_MediaControllerReport_Data_t	MediaControllerReportData;
+	bool					SendReport = false;
+
+	/* Create the next keyboard report for transmission to the host */
+	CreateMediaControllerReport(&MediaControllerReportData);
+
+	/* Check if the idle period is set and has elapsed */
+	if (IdleCount && (!(IdleMSRemaining)))
+	{
+		/* Reset the idle time remaining counter */
+		IdleMSRemaining = IdleCount;
+
+		/* Idle period is set and has elapsed, must send a report to the host */
+		SendReport = true;
+	}
+	else
+	{
+		/* Check to see if the report data has changed - if so a report MUST be sent */
+		SendReport = (memcmp(&PrevMediaControllerReportData, &MediaControllerReportData, sizeof(USB_MediaControllerReport_Data_t)) != 0);
+	}
+
+	/* Select the Keyboard Report Endpoint */
+	Endpoint_SelectEndpoint(MEDIACONTROLLER_IN_EPADDR);
+
+	/* Check if Keyboard Endpoint Ready for Read/Write and if we should send a new report */
+	if (Endpoint_IsReadWriteAllowed() && SendReport)
+	{
+		/* Save the current report data for later comparison to check for changes */
+		PrevMediaControllerReportData = MediaControllerReportData;
+
+		/* Write Keyboard Report Data */
+		Endpoint_Write_Stream_LE(&MediaControllerReportData, sizeof(MediaControllerReportData), NULL);
+
+		/* Finalize the stream transfer to send the last packet */
+		Endpoint_ClearIN();
+	}
+}
+
 /** Reads the next LED status report from the host from the LED data endpoint, if one has been sent. */
-void ReceiveNextReport(void)
+void ReceiveNextKeyboardReport(void)
 {
 	/* Select the Keyboard LED Report Endpoint */
 	Endpoint_SelectEndpoint(KEYBOARD_OUT_EPADDR);
@@ -382,9 +453,13 @@ void HID_Task(void)
 	  return;
 
 	/* Send the next keypress report to the host */
-	SendNextReport();
+	SendNextKeyboardReport();
 
 	/* Process the LED report sent from the host */
-	ReceiveNextReport();
+	ReceiveNextKeyboardReport();
+
+	/* Send the next media controller keypress report to the host */
+	SendNextMediaControllerReport();
+
 }
 

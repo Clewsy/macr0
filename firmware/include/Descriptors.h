@@ -52,10 +52,16 @@
 			USB_Descriptor_Configuration_Header_t Config;
 
 			// Keyboard HID Interface
-			USB_Descriptor_Interface_t            HID_Interface;
-			USB_HID_Descriptor_HID_t              HID_KeyboardHID;
-			USB_Descriptor_Endpoint_t             HID_ReportINEndpoint;
-			USB_Descriptor_Endpoint_t             HID_ReportOUTEndpoint;
+			USB_Descriptor_Interface_t            HID1_KeyboardInterface;
+			USB_HID_Descriptor_HID_t              HID1_KeyboardHID;
+			USB_Descriptor_Endpoint_t             HID1_ReportINEndpoint;
+			USB_Descriptor_Endpoint_t             HID1_ReportOUTEndpoint;
+
+			// MediaController HID Interface
+			USB_Descriptor_Interface_t            HID2_MediaControllerInterface;
+			USB_HID_Descriptor_HID_t              HID2_MediaControllerHID;
+			USB_Descriptor_Endpoint_t             HID2_ReportINEndpoint;
+
 		} USB_Descriptor_Configuration_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
@@ -65,6 +71,7 @@
 		enum InterfaceDescriptors_t
 		{
 			INTERFACE_ID_Keyboard = 0, /**< Keyboard interface descriptor ID */
+			INTERFACE_ID_MediaController = 1, /**< MediaController interface descriptor ID */
 		};
 
 		/** Enum for the device string descriptor IDs within the device. Each string descriptor should
@@ -80,15 +87,18 @@
 
 	/* Macros: */
 		/** Endpoint address of the Keyboard HID reporting IN endpoint. */
-		#define KEYBOARD_IN_EPADDR        (ENDPOINT_DIR_IN  | 1)
+		#define KEYBOARD_IN_EPADDR	(ENDPOINT_DIR_IN  | 1)
 
 		/** Endpoint address of the Keyboard HID reporting OUT endpoint. */
-		#define KEYBOARD_OUT_EPADDR       (ENDPOINT_DIR_OUT | 2)
+		#define KEYBOARD_OUT_EPADDR	(ENDPOINT_DIR_OUT | 2)
 
-		/** Size in bytes of the Keyboard HID reporting IN and OUT endpoints. */
-		#define KEYBOARD_EPSIZE           8
+		/** Endpoint address of the Media Control HID reporting IN endpoint. */
+		#define MEDIACONTROLLER_IN_EPADDR	(ENDPOINT_DIR_IN | 3)
 
+		/** Size in bytes of the Media Control HID reporting IN endpoint. */
+		#define HID_EPSIZE		8
 	/* Function Prototypes: */
+
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 		                                    const uint16_t wIndex,
 		                                    const void** const DescriptorAddress)
