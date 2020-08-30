@@ -53,7 +53,7 @@
 		#include <LUFA/Drivers/Board/LEDs.h>
 		#include <LUFA/Platform/Platform.h>
 
-
+#include "keyscan.h"
 	/* Macros: */
 		/** LED mask for the library LED driver, to indicate that the USB interface is not ready. */
 		#define LEDMASK_USB_NOTREADY        LEDS_LED1

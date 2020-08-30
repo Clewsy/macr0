@@ -5,6 +5,7 @@
 
 extern const char KEYMAP[NUM_ROWS][NUM_COLS];
 
+		/** Constant for a keyboard report modifier byte, indicating that the keyboard's left control key is currently pressed. */
 		#define HID_KEYBOARD_MODIFIER_LEFTCTRL                    (1 << 0)
 
 		/** Constant for a keyboard report modifier byte, indicating that the keyboard's left shift key is currently pressed. */

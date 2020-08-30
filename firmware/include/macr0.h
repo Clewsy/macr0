@@ -1,8 +1,8 @@
 #include <avr/io.h>
 
-#include "keyscan.h"
-//#include "keymap.h"
 
 #include "Keyboard.h"
+//#include "keyscan.h"	// Included in Keyboard.h
+//#include "keymap.h"// Included in keyscan.h
 #include "dimmer.h"
 #include "cat4104.h"

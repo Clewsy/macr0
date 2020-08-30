@@ -14,6 +14,6 @@
 
 
 void keyscan_init(void);
-char keyscan_get_key(void);
+char keyscan_get_keys(void);
 uint8_t keyscan_char_to_key(char c);
 

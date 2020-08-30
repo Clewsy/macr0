@@ -14,14 +14,6 @@ void keyscan_init(void)
 }
 
 
-//#define NUM_ROWS 2
-//#define NUM_COLS 2
-//const char KEYMAP[NUM_ROWS][NUM_COLS] PROGMEM = {
-//	{'e', 'f'},
-//	{'g', 'h'}
-//};
-
-
 
 char keyscan_get_keys(void)
 {

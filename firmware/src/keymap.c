@@ -1,7 +1,7 @@
 #include "keymap.h"
 
 const char KEYMAP[NUM_ROWS][NUM_COLS] PROGMEM = {
-	{'W', 'X'},
-	{'Y', 'Z'}
+	{HID_KEYBOARD_SC_MEDIA_PLAY, HID_KEYBOARD_SC_N},
+	{HID_KEYBOARD_SC_VOLUME_DOWN, HID_KEYBOARD_SC_P}
 };
 
