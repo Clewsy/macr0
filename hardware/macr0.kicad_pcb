@@ -1529,7 +1529,7 @@
   (gr_text GND (at 134.112 116.586 90) (layer B.SilkS)
     (effects (font (size 0.5 0.5) (thickness 0.125)) (justify mirror))
   )
-  (gr_text clewsy.pro (at 127 117.348) (layer B.SilkS)
+  (gr_text clews.pro (at 127 117.348) (layer B.SilkS)
     (effects (font (size 0.75 0.75) (thickness 0.125)) (justify mirror))
   )
   (gr_line (start 158.623 77.597) (end 115.443 77.597) (layer Edge.Cuts) (width 0.05) (tstamp 5F1DE667))
