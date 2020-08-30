@@ -1,21 +1,27 @@
 #include "macr0.h"
 
-
-
-uint8_t dim_value = 250;
 ISR(DIMMER_PCI_VECTOR)
 {
 	_delay_ms(20);	// Button de-bounce.
 
-	if(dimmer_check())
+	if(dimmer_check())	// If the button is still pressed (i.e. not a bounce).
 	{
-		dim_value += 50;
-		if(dim_value == (uint8_t)(250+50)) dim_value = 0;
-
-		cat4104_set(dim_value);
+		if(cat4104_get() == 250)	cat4104_set(0);
+		else				cat4104_set(cat4104_get() + 50);
 
 		while(dimmer_check()) {}	// Wait until the button is released.
 	}
+}
+
+
+void hardware_init(void)
+{
+	cat4104_init();
+	dimmer_init();
+	dimmer_enable();
+	keyscan_init();
+
+	SetupHardware();	// Specifically, keyboard HID USB hardware.  Function defined in Keyboard.c
 }
 
 
@@ -25,13 +31,7 @@ ISR(DIMMER_PCI_VECTOR)
 int main(void)
 {
 
-cat4104_init();
-dimmer_init();
-dimmer_enable();
-
-
-	SetupHardware();
-
+	hardware_init();
 //	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 

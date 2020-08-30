@@ -53,58 +53,52 @@ static uint16_t IdleCount = 500;
  */
 static uint16_t IdleMSRemaining = 0;
 
-
-
-
-
-
-
-
-
-
-
-
-#define KEYS_PORT	PORTD
-#define KEYS_PINS	PIND
-#define KEYS_DDR	DDRD
-#define ROW_1		PD0
-#define ROW_2		PD1
-#define COL_1		PD2
-#define COL_2		PD3
-#define NO_KEY		0x00	//Used to indicate a no-key keystroke event.
-#define NO_MODIFIER	0x00	//Used to indicate a no-modifier keystroke event.
-
-void keys_init(void)
-{
-	// Set rows as outputs.
-	KEYS_DDR |= ((1 << ROW_1) | (1 << ROW_2));
-
-	// Set columns as inputs and enable pull-ups.
-	KEYS_DDR &= ~((1 << COL_1) | (1 << COL_2));
-	KEYS_PORT |= ((1 << COL_1) | (1 << COL_2));
-
-//KEYS_PORT &= ~((1 << ROW_1) | (1 << ROW_2));
-KEYS_PORT |= ((1 << ROW_1) | (1 << ROW_2));
-
-}
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//clewsy: main function taken out of Keyboard.c and is instead in macr0.c
+/** Main program entry point. This routine configures the hardware required by the application, then
+ *  enters a loop to run the application tasks in sequence.
+ */
+//int main(void)
+//{
+//	SetupHardware();
+//
+//	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
+//	GlobalInterruptEnable();
+//
+//	for (;;)
+//	{
+//		HID_Task();
+//		USB_USBTask();
+//	}
+//}
 
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
+#if (ARCH == ARCH_AVR8)
 	/* Disable watchdog if enabled by bootloader/fuses */
 	MCUSR &= ~(1 << WDRF);
 	wdt_disable();
 
 	/* Disable clock division */
 	clock_prescale_set(clock_div_1);
+#elif (ARCH == ARCH_XMEGA)
+	/* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
+	XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
+	XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
 
-keys_init();
+	/* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
+	XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
+	XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
+
+	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
+#endif
+
 	/* Hardware Initialization */
-//	Joystick_Init();
-//	LEDs_Init();
+	Joystick_Init();
+	LEDs_Init();
 	USB_Init();
-//	Buttons_Init();
+	Buttons_Init();
 }
 
 /** Event handler for the USB_Connect event. This indicates that the device is enumerating via the status LEDs and
@@ -253,87 +247,8 @@ void EVENT_USB_Device_StartOfFrame(void)
 	  IdleMSRemaining--;
 }
 
-
-
-
-
-char get_key(void)
-{
-	uint8_t col_array[2] = {COL_1, COL_2};
-	uint8_t row_array[2] = {ROW_1, ROW_2};
-
-	for(uint8_t r = 0; r < 2; r++)
-	{
-		KEYS_PORT &= ~(1 << row_array[r]);	// Set low current row (enable check).
-
-		while(!(~KEYS_PINS & (1 << row_array[r]))) {}	// Wait until row is set low before continueing, otherwise column checks can be missed.
-
-		for(uint8_t c = 0; c < 2; c++)
-		{
-			if(~KEYS_PINS & (1 << col_array[c]))
-			{
-				KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
-				return('a' + (2*r) + c);
-			}
-		}
-
-		KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
-	}
-
-	return(NO_KEY);
-}
-//This function takes a character from the string and converts it to the value corresponding to the appropriate keystroke.
-//Refer to LUFA driver file LUFA/USB/CLASS/COMMON/HIDClassCommon.h
-uint8_t CharToKey(char c)
-{
-	switch ((uint8_t)c)	//Typecast the character as an integer.
-	{
-		case 'A' ... 'Z' :	return ((uint8_t)c - 61);
-		case 'a' ... 'z' :	return ((uint8_t)c - 93);
-		case '1' ... '9' :	return ((uint8_t)c - 19);
-		case '0' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
-		case '!' :		return (HID_KEYBOARD_SC_1_AND_EXCLAMATION);
-		case '@' :		return (HID_KEYBOARD_SC_2_AND_AT);
-		case '#' :		return (HID_KEYBOARD_SC_3_AND_HASHMARK);
-		case '$' :		return (HID_KEYBOARD_SC_4_AND_DOLLAR);
-		case '%' :		return (HID_KEYBOARD_SC_5_AND_PERCENTAGE);
-		case '^' :		return (HID_KEYBOARD_SC_6_AND_CARET);
-		case '&' :		return (HID_KEYBOARD_SC_7_AND_AMPERSAND);
-		case '*' :		return (HID_KEYBOARD_SC_8_AND_ASTERISK);
-		case '(' :		return (HID_KEYBOARD_SC_9_AND_OPENING_PARENTHESIS);
-		case ')' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
-		case '\n':		return (HID_KEYBOARD_SC_ENTER);
-		case '\e':		return (HID_KEYBOARD_SC_ESCAPE);
-		case '\b':		return (HID_KEYBOARD_SC_BACKSPACE);
-		case '\t':		return (HID_KEYBOARD_SC_TAB);
-		case ' ' :		return (HID_KEYBOARD_SC_SPACE);
-		case '-' :
-		case '_' :		return (HID_KEYBOARD_SC_MINUS_AND_UNDERSCORE);
-		case '=' :
-		case '+' :		return (HID_KEYBOARD_SC_EQUAL_AND_PLUS);
-		case '[' :
-		case '{' :		return (HID_KEYBOARD_SC_OPENING_BRACKET_AND_OPENING_BRACE);
-		case ']' :
-		case '}' :		return (HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE);
-		case '\\':
-		case '|' :		return (HID_KEYBOARD_SC_BACKSLASH_AND_PIPE);
-		case ';' :
-		case ':' :		return (HID_KEYBOARD_SC_SEMICOLON_AND_COLON);
-		case '\'':
-		case '"' :		return (HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE);
-		case '`' :
-		case '~' :		return (HID_KEYBOARD_SC_GRAVE_ACCENT_AND_TILDE);
-		case ',' :
-		case '<' :		return (HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN);
-		case '.' :
-		case '>' :		return (HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN);
-		case '/' :
-		case '?' :		return (HID_KEYBOARD_SC_SLASH_AND_QUESTION_MARK);
-
-		default :		return NO_KEY;	//If there is no character match "fail" by sending a NO_KEY code.
-	}
-}
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//clewsy: create HID report function changed from demo.  Handed off to keyscan_getkeys() in keyscan.c
 /** Fills the given HID report data structure with the next HID report to send to the host.
  *
  *  \param[out] ReportData  Pointer to a HID report data structure to be filled
@@ -348,15 +263,14 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 	/* Clear the report contents */
 	memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
 
-	/* Make sent key uppercase by indicating that the left shift key is pressed */
+//	/* Make sent key uppercase by indicating that the left shift key is pressed */
 //	ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
-//	ReportData->Modifier = NO_MODIFIER;
 
-
-
+	  ReportData->KeyCode[UsedKeyCodes++] = keyscan_char_to_key(keyscan_get_keys());
+_delay_ms(4);
+//
 //	if (JoyStatus_LCL & JOY_UP)
-	  ReportData->KeyCode[UsedKeyCodes++] = CharToKey(get_key());
-_delay_ms(4);	//Dirty delay to prevent button bounce registering as a double-press.
+//	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_A;
 //	else if (JoyStatus_LCL & JOY_DOWN)
 //	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_B;
 //
@@ -371,6 +285,7 @@ _delay_ms(4);	//Dirty delay to prevent button bounce registering as a double-pre
 //	if (ButtonStatus_LCL & BUTTONS_BUTTON1)
 //	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_F;
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** Processes a received LED report, and updates the board LEDs states to match.
  *

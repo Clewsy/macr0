@@ -1,4 +1,7 @@
-//#include <avr/io.h>
+#include <avr/io.h>
+
+#include "keyscan.h"
+//#include "keymap.h"
 
 #include "Keyboard.h"
 #include "dimmer.h"

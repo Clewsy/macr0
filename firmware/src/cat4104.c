@@ -22,3 +22,9 @@ void cat4104_set(uint8_t duty)
 {
 	PWM_SET = duty;
 }
+
+// Get the current duty cycle (0 to 255).
+uint8_t cat4104_get(void)
+{
+	return(PWM_SET);
+}
