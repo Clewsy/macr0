@@ -30,7 +30,21 @@ void handle_key(char key, keyscan_report_t *keyscan_report)
 		key -= HID_KEYBOARD_SC_LEFT_CONTROL;
 		keyscan_report->modifier |= (1 << key);		
 	}
-	
+
+	// Regular keys scan values range from 0x00 to 0x65.
+	else  if(key > HID_KEYBOARD_SC_RESERVED)
+	{
+//		uint8_t i = 0;
+//		while(keyscan_report->keys[i] == 0x00) i++;
+
+		keyscan_report->keys[0] = key;
+		keyscan_report->keys[1] = HID_KEYBOARD_SC_V;
+		keyscan_report->keys[2] = HID_KEYBOARD_SC_W;
+		keyscan_report->keys[3] = HID_KEYBOARD_SC_X;
+		keyscan_report->keys[4] = HID_KEYBOARD_SC_Y;
+		keyscan_report->keys[5] = HID_KEYBOARD_SC_Z;
+		
+	}	
 
 }
 

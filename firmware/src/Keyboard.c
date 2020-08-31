@@ -241,8 +241,18 @@ ReportData->Modifier = keyscan_report.modifier;
 
 
 
-	  ReportData->KeyCode[UsedKeyCodes++] = keyscan_get_keys();
-_delay_ms(4);
+//	  ReportData->KeyCode[UsedKeyCodes++] = keyscan_get_keys();
+//_delay_ms(4);
+
+	  ReportData->KeyCode[0] = keyscan_report.keys[0];
+	  ReportData->KeyCode[1] = keyscan_report.keys[1];
+	  ReportData->KeyCode[2] = keyscan_report.keys[2];
+	  ReportData->KeyCode[3] = keyscan_report.keys[3];
+	  ReportData->KeyCode[4] = keyscan_report.keys[4];
+	  ReportData->KeyCode[5] = keyscan_report.keys[5];
+
+
+
 //
 //	if (JoyStatus_LCL & JOY_UP)
 //	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_A;
