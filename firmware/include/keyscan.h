@@ -10,8 +10,9 @@
 #define ROW_2		PD1
 #define COL_1		PD2
 #define COL_2		PD3
-#define NO_KEY		0x00	//Used to indicate a no-key keystroke event.
-#define NO_MODIFIER	0x00	//Used to indicate a no-modifier keystroke event.
+#define NO_KEY		0x00	// Used to indicate a no-key keystroke event.
+#define NO_MODIFIER	0x00	// Used to indicate a no-modifier keystroke event.
+#define MAX_KEYS	6	// Maximum number of simultaneous key-presses that can be detected (excluding media keys and modifier keys).
 
 typedef struct
 {

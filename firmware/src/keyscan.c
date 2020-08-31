@@ -34,16 +34,11 @@ void handle_key(char key, keyscan_report_t *keyscan_report)
 	// Regular keys scan values range from 0x00 to 0x65.
 	else  if(key > HID_KEYBOARD_SC_RESERVED)
 	{
-//		uint8_t i = 0;
-//		while(keyscan_report->keys[i] == 0x00) i++;
-
-		keyscan_report->keys[0] = key;
-		keyscan_report->keys[1] = HID_KEYBOARD_SC_V;
-		keyscan_report->keys[2] = HID_KEYBOARD_SC_W;
-		keyscan_report->keys[3] = HID_KEYBOARD_SC_X;
-		keyscan_report->keys[4] = HID_KEYBOARD_SC_Y;
-		keyscan_report->keys[5] = HID_KEYBOARD_SC_Z;
-		
+		uint8_t i = 0;
+		while(keyscan_report->keys[i]) i++;
+		if(i > 5) i = 0;
+		keyscan_report->keys[i] = key;
+	
 	}	
 
 }
@@ -52,11 +47,28 @@ void create_keyscan_report(keyscan_report_t *keyscan_report)
 {
 
 	memset(keyscan_report, 0, sizeof(keyscan_report_t));
+	for(uint8_t i = 0; i < 6; i++) keyscan_report->keys[i] = 0x00;
 
 
-	handle_key(keyscan_get_keys(), keyscan_report);
+	uint8_t col_array[2] = {COL_1, COL_2};
+	uint8_t row_array[2] = {ROW_1, ROW_2};
 
-//	return(NO_KEY);
+	for(uint8_t r = 0; r < 2; r++)
+	{
+		KEYS_PORT &= ~(1 << row_array[r]);	// Set low current row (enable check).
+
+		while(!(~KEYS_PINS & (1 << row_array[r]))) {}	// Wait until row is set low before continueing, otherwise column checks can be missed.
+
+		for(uint8_t c = 0; c < 2; c++)
+		{
+			if(~KEYS_PINS & (1 << col_array[c]))
+			{
+				handle_key(pgm_read_byte(&KEYMAP[r][c]), keyscan_report);
+			}
+		}
+
+		KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
+	}
 
 }
 

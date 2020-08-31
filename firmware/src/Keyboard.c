@@ -229,7 +229,7 @@ void EVENT_USB_Device_StartOfFrame(void)
 // clewsy: create HID report function significantly changed.  Handed off to keyscan_getkeys() in keyscan.c
 void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 {
-	uint8_t UsedKeyCodes      = 0;
+//	uint8_t UsedKeyCodes      = 0;
 
 	// Clear the report contents.
 	memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
@@ -242,15 +242,13 @@ ReportData->Modifier = keyscan_report.modifier;
 
 
 //	  ReportData->KeyCode[UsedKeyCodes++] = keyscan_get_keys();
+	for(uint8_t i = 0; i < MAX_KEYS; i++)  ReportData->KeyCode[i] = keyscan_report.keys[i];
 //_delay_ms(4);
-
-	  ReportData->KeyCode[0] = keyscan_report.keys[0];
-	  ReportData->KeyCode[1] = keyscan_report.keys[1];
-	  ReportData->KeyCode[2] = keyscan_report.keys[2];
-	  ReportData->KeyCode[3] = keyscan_report.keys[3];
-	  ReportData->KeyCode[4] = keyscan_report.keys[4];
-	  ReportData->KeyCode[5] = keyscan_report.keys[5];
-
+//	  ReportData->KeyCode[1] = keyscan_report.keys[1];
+//	  ReportData->KeyCode[2] = keyscan_report.keys[2];
+//	  ReportData->KeyCode[3] = keyscan_report.keys[3];
+//	  ReportData->KeyCode[4] = keyscan_report.keys[4];
+//	  ReportData->KeyCode[5] = keyscan_report.keys[5];
 
 
 //
@@ -446,6 +444,7 @@ void HID_Task(void)
 
 	// Send the next keypress report to the host.
 	SendNextKeyboardReport();
+_delay_ms(1);
 
 	// Process the LED report sent from the host.
 	ReceiveNextKeyboardReport();
