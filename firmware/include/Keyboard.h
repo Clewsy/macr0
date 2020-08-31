@@ -89,6 +89,9 @@ typedef struct
 	unsigned RESERVED       : 5;
 } ATTR_PACKED USB_MediaControllerReport_Data_t;
 
+keyscan_report_t keyscan_report;
+
+
 // Function Prototypes:
 void SetupHardware(void);
 void HID_Task(void);

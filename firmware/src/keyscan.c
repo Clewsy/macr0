@@ -15,13 +15,22 @@ void keyscan_init(void)
 
 void handle_key(char key, keyscan_report_t *keyscan_report)
 {
-	// Media key scan values atart after the last keyboard key scan.
-	if(key > HID_KEYBOARD_SC_APPLICATION)
+	// Media key scan values start at 0xF0, after the last keyboard modifier key scan.
+	if(key > HID_KEYBOARD_SC_RIGHT_GUI)
 	{
 		// Convert the media key to a value from 0 to 10.
 		key -= HID_MEDIACONTROLLER_SC_PLAY;
 		keyscan_report->media_keys |= (1 << key);		
 	}
+
+	// Modifier keys scan values start at 0xE0, after the last keyboard modifier key scan.
+	else if(key > HID_KEYBOARD_SC_APPLICATION)
+	{
+		// Convert the media key to a value from 0 to 7.
+		key -= HID_KEYBOARD_SC_LEFT_CONTROL;
+		keyscan_report->modifier |= (1 << key);		
+	}
+	
 
 }
 

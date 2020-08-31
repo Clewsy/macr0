@@ -237,6 +237,10 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 //	/* Make sent key uppercase by indicating that the left shift key is pressed */
 //	ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
 
+ReportData->Modifier = keyscan_report.modifier;
+
+
+
 	  ReportData->KeyCode[UsedKeyCodes++] = keyscan_get_keys();
 _delay_ms(4);
 //
@@ -271,8 +275,8 @@ void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaRe
 
 /* Update the Media Control report with the user button presses */
 
-keyscan_report_t keyscan_report;
-create_keyscan_report(&keyscan_report);
+//keyscan_report_t keyscan_report;
+//create_keyscan_report(&keyscan_report);
 
 MediaReportData->Play		= (keyscan_report.media_keys & (1 << MK_PLAY) ? true : false);
 MediaReportData->Pause		= (keyscan_report.media_keys & (1 << MK_PAUSE) ? true : false);
@@ -425,6 +429,9 @@ void HID_Task(void)
 	// Device must be connected and configured for the task to run.
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
+
+
+	create_keyscan_report(&keyscan_report);
 
 
 	// Send the next keypress report to the host.
