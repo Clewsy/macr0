@@ -13,7 +13,29 @@ void keyscan_init(void)
 	KEYS_PORT |= ((1 << COL_1) | (1 << COL_2));
 }
 
+void handle_key(char key, keyscan_report_t *keyscan_report)
+{
+	// Media key scan values atart after the last keyboard key scan.
+	if(key > HID_KEYBOARD_SC_APPLICATION)
+	{
+		// Convert the media key to a value from 0 to 10.
+		key -= HID_MEDIACONTROLLER_SC_PLAY;
+		keyscan_report->media_keys |= (1 << key);		
+	}
 
+}
+
+void create_keyscan_report(keyscan_report_t *keyscan_report)
+{
+
+	memset(keyscan_report, 0, sizeof(keyscan_report_t));
+
+
+	handle_key(keyscan_get_keys(), keyscan_report);
+
+//	return(NO_KEY);
+
+}
 
 char keyscan_get_keys(void)
 {

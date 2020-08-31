@@ -268,17 +268,23 @@ void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaRe
 	// Clear the report contents.
 	memset(MediaReportData, 0, sizeof(USB_MediaControllerReport_Data_t));
 
-char kee = keyscan_get_keys();
-if (kee == HID_KEYBOARD_SC_VOLUME_DOWN) MediaReportData->VolumeDown = true;
-else if (kee == HID_KEYBOARD_SC_VOLUME_UP) MediaReportData->VolumeUp = true;
 
-	/* Update the Media Control report with the user button presses */
-	MediaReportData->Mute          = false;
-	MediaReportData->PlayPause     = false;
-//	MediaReportData->VolumeUp      = false;
-//	MediaReportData->VolumeDown    = false;
-	MediaReportData->PreviousTrack = false;
-	MediaReportData->NextTrack     = false;
+/* Update the Media Control report with the user button presses */
+
+keyscan_report_t keyscan_report;
+create_keyscan_report(&keyscan_report);
+
+MediaReportData->Play		= (keyscan_report.media_keys & (1 << MK_PLAY) ? true : false);
+MediaReportData->Pause		= (keyscan_report.media_keys & (1 << MK_PAUSE) ? true : false);
+MediaReportData->FForward	= (keyscan_report.media_keys & (1 << MK_FF) ? true : false);
+MediaReportData->Rewind		= (keyscan_report.media_keys & (1 << MK_RW) ? true : false);
+MediaReportData->NextTrack	= (keyscan_report.media_keys & (1 << MK_NEXT) ? true : false);
+MediaReportData->PreviousTrack	= (keyscan_report.media_keys & (1 << MK_PREVIOUS) ? true : false);
+MediaReportData->Stop		= (keyscan_report.media_keys & (1 << MK_STOP) ? true : false);
+MediaReportData->PlayPause	= (keyscan_report.media_keys & (1 << MK_TOGGLE) ? true : false);
+MediaReportData->Mute		= (keyscan_report.media_keys & (1 << MK_MUTE) ? true : false);
+MediaReportData->VolumeUp	= (keyscan_report.media_keys & (1 << MK_VOL_UP) ? true : false);
+MediaReportData->VolumeDown	= (keyscan_report.media_keys & (1 << MK_VOL_DOWN) ? true : false);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -419,6 +425,7 @@ void HID_Task(void)
 	// Device must be connected and configured for the task to run.
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
+
 
 	// Send the next keypress report to the host.
 	SendNextKeyboardReport();
