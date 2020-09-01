@@ -4,7 +4,7 @@
 #define NUM_COLS 2	// Number of columns to scan.
 
 // Declare the keymap array.
-extern const char KEYMAP[NUM_ROWS][NUM_COLS];
+const char KEYMAP[NUM_ROWS][NUM_COLS];
 
 // Key scan-codes:
 // Note these are defined in the lufa library file LUFA/Drivers/USB/Class/Common/HIDClassCommon.h but repeated again here for convenience.

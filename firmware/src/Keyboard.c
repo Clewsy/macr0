@@ -69,7 +69,7 @@ static uint16_t IdleMSRemaining = 0;
 
 // Configures the board hardware and chip peripherals.
 // clewsy: Use case is specifically an ATmega32U4 (ARCH_AVR8) so requirements for other architectures can be removed.
-void SetupHardware(void)
+void SetupHIDHardware(void)
 {
 	// Disable watchdog if enabled by bootloader/fuses.
 	MCUSR &= ~(1 << WDRF);
@@ -130,16 +130,28 @@ void EVENT_USB_Device_ControlRequest(void)
 		case HID_REQ_GetReport:
 			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
 			{
-				USB_KeyboardReport_Data_t KeyboardReportData;
+				// Determine if it is the keyboard or media controller data that is being requested.
+				if (!(USB_ControlRequest.wIndex))
+				{
 
-				// Create the next keyboard report for transmission to the host.
-				CreateKeyboardReport(&KeyboardReportData);
-
+					// Create the next keyboard report for transmission to the host.
+					USB_KeyboardReport_Data_t KeyboardReportData;
+					CreateKeyboardReport(&KeyboardReportData);
+					// Write the report data to the control endpoint.
+					Endpoint_Write_Control_Stream_LE(&KeyboardReportData, sizeof(KeyboardReportData));
+				}
+				else
+				{
+					// Create the next media controller report for transmission to the host.
+					USB_MediaControllerReport_Data_t MediaControllerReportData;
+					CreateMediaControllerReport(&MediaControllerReportData);
+					// Write the report data to the control endpoint.
+					Endpoint_Write_Control_Stream_LE(&MediaControllerReportData, sizeof(MediaControllerReportData));
+				}
+				Endpoint_ClearOUT();
+				
 				Endpoint_ClearSETUP();
 
-				// Write the report data to the control endpoint.
-				Endpoint_Write_Control_Stream_LE(&KeyboardReportData, sizeof(KeyboardReportData));
-				Endpoint_ClearOUT();
 			}
 			break;
 
@@ -220,87 +232,45 @@ void EVENT_USB_Device_ControlRequest(void)
 void EVENT_USB_Device_StartOfFrame(void)
 {
 	// One millisecond has elapsed, decrement the idle time remaining counter if it has not already elapsed.
-	if (IdleMSRemaining)
-	  IdleMSRemaining--;
+	if (IdleMSRemaining) IdleMSRemaining--;
 }
 
 // Fills the given HID report data structure with the next keyboard HID input report to send to the host.
 // ReportData  Pointer to a HID report data structure to be filled.
-// clewsy: create HID report function significantly changed.  Handed off to keyscan_getkeys() in keyscan.c
+// clewsy: create HID report function significantly changed.  Report data derived from keyscan report created by the create_keyscan_report() function in keyscan.c.
 void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 {
-//	uint8_t UsedKeyCodes      = 0;
-
 	// Clear the report contents.
 	memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
 
-//	/* Make sent key uppercase by indicating that the left shift key is pressed */
-//	ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
+	// Update the modifier byte from the last keyscan report.
+	ReportData->Modifier = keyscan_report.modifier;
 
-ReportData->Modifier = keyscan_report.modifier;
-
-
-
-//	  ReportData->KeyCode[UsedKeyCodes++] = keyscan_get_keys();
-	for(uint8_t i = 0; i < MAX_KEYS; i++)  ReportData->KeyCode[i] = keyscan_report.keys[i];
-//_delay_ms(4);
-//	  ReportData->KeyCode[1] = keyscan_report.keys[1];
-//	  ReportData->KeyCode[2] = keyscan_report.keys[2];
-//	  ReportData->KeyCode[3] = keyscan_report.keys[3];
-//	  ReportData->KeyCode[4] = keyscan_report.keys[4];
-//	  ReportData->KeyCode[5] = keyscan_report.keys[5];
-
-
-//
-//	if (JoyStatus_LCL & JOY_UP)
-//	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_A;
-//	else if (JoyStatus_LCL & JOY_DOWN)
-//	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_B;
-//
-//	if (JoyStatus_LCL & JOY_LEFT)
-//	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_C;
-//	else if (JoyStatus_LCL & JOY_RIGHT)
-//	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_D;
-//
-//	if (JoyStatus_LCL & JOY_PRESS)
-//	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_E;
-//
-//	if (ButtonStatus_LCL & BUTTONS_BUTTON1)
-//	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_F;
+	// Update the keys from the last keyscan report.
+	for(uint8_t i = 0; keyscan_report.keys[i] != 0x00; i++)  ReportData->KeyCode[i] = keyscan_report.keys[i];
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Fills the given HID report data structure with the next media controller HID input report to send to the host.
 // MediaReportData  Pointer to a HID report data structure to be filled.
 // clewsy: created this function from scratch, same concept as keyboard version.
 void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaReportData)
 {
-
 	// Clear the report contents.
 	memset(MediaReportData, 0, sizeof(USB_MediaControllerReport_Data_t));
 
-
-/* Update the Media Control report with the user button presses */
-
-//keyscan_report_t keyscan_report;
-//create_keyscan_report(&keyscan_report);
-
-MediaReportData->Play		= (keyscan_report.media_keys & (1 << MK_PLAY) ? true : false);
-MediaReportData->Pause		= (keyscan_report.media_keys & (1 << MK_PAUSE) ? true : false);
-MediaReportData->FForward	= (keyscan_report.media_keys & (1 << MK_FF) ? true : false);
-MediaReportData->Rewind		= (keyscan_report.media_keys & (1 << MK_RW) ? true : false);
-MediaReportData->NextTrack	= (keyscan_report.media_keys & (1 << MK_NEXT) ? true : false);
-MediaReportData->PreviousTrack	= (keyscan_report.media_keys & (1 << MK_PREVIOUS) ? true : false);
-MediaReportData->Stop		= (keyscan_report.media_keys & (1 << MK_STOP) ? true : false);
-MediaReportData->PlayPause	= (keyscan_report.media_keys & (1 << MK_TOGGLE) ? true : false);
-MediaReportData->Mute		= (keyscan_report.media_keys & (1 << MK_MUTE) ? true : false);
-MediaReportData->VolumeUp	= (keyscan_report.media_keys & (1 << MK_VOL_UP) ? true : false);
-MediaReportData->VolumeDown	= (keyscan_report.media_keys & (1 << MK_VOL_DOWN) ? true : false);
-
+	// Update the Media Control report flags from the latest keyscan report.
+	MediaReportData->Play		= (keyscan_report.media_keys & (1 << MK_PLAY) ? true : false);
+	MediaReportData->Pause		= (keyscan_report.media_keys & (1 << MK_PAUSE) ? true : false);
+	MediaReportData->FForward	= (keyscan_report.media_keys & (1 << MK_FF) ? true : false);
+	MediaReportData->Rewind		= (keyscan_report.media_keys & (1 << MK_RW) ? true : false);
+	MediaReportData->NextTrack	= (keyscan_report.media_keys & (1 << MK_NEXT) ? true : false);
+	MediaReportData->PreviousTrack	= (keyscan_report.media_keys & (1 << MK_PREVIOUS) ? true : false);
+	MediaReportData->Stop		= (keyscan_report.media_keys & (1 << MK_STOP) ? true : false);
+	MediaReportData->PlayPause	= (keyscan_report.media_keys & (1 << MK_TOGGLE) ? true : false);
+	MediaReportData->Mute		= (keyscan_report.media_keys & (1 << MK_MUTE) ? true : false);
+	MediaReportData->VolumeUp	= (keyscan_report.media_keys & (1 << MK_VOL_UP) ? true : false);
+	MediaReportData->VolumeDown	= (keyscan_report.media_keys & (1 << MK_VOL_DOWN) ? true : false);
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 // Processes a received LED report, and updates the board LEDs states to match.
 // LEDReport LED status report from the host.
@@ -438,13 +408,10 @@ void HID_Task(void)
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
 
-
 	create_keyscan_report(&keyscan_report);
-
 
 	// Send the next keypress report to the host.
 	SendNextKeyboardReport();
-//_delay_ms(1);
 
 	// Process the LED report sent from the host.
 	ReceiveNextKeyboardReport();

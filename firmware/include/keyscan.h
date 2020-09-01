@@ -3,15 +3,17 @@
 #include <string.h>			// Included for memset function.
 #include "keymap.h"
 
-#define KEYS_PORT	PORTD	// Hardware Port definition for controlling scan rows.
-#define KEYS_PINS	PIND	// Hardware Pins definition for reading column rows.
-#define KEYS_DDR	DDRD	// Hardware data direction register for setting row pins as outputs and column pins as inputs.
-#define ROW_1		PD0	// Pin connected to the first row.
-#define ROW_2		PD1	// Pin connected to the second row.
-#define COL_1		PD2	// Pin connected to the first column.
-#define COL_2		PD3	// Pin connected to the second column.
+#define KEYS_PORT	PORTD		// Hardware Port definition for controlling scan rows.
+#define KEYS_PINS	PIND		// Hardware Pins definition for reading column rows.
+#define KEYS_DDR	DDRD		// Hardware data direction register for setting row pins as outputs and column pins as inputs.
+#define ROW_1		PD0		// Pin connected to the first row.
+#define ROW_2		PD1		// Pin connected to the second row.
+#define COL_1		PD2		// Pin connected to the first column.
+#define COL_2		PD3		// Pin connected to the second column.
+#define ROW_ARRAY	{ROW_1, ROW_2}	// Array of row pins.  Define here so that the function doesn't have to be altered when varying the number of rows.
+#define COL_ARRAY	{COL_1, COL_2}	// Array of column pins.  Define here so that the function doesn't have to be altered when varying the number of columns.
 
-#define MAX_KEYS	4	// Maximum number of simultaneous key-presses that can be detected (excluding media keys and modifier keys).
+#define MAX_KEYS	6		// Maximum number of simultaneous key-presses that can be detected (excluding media keys and modifier keys).
 
 // Bit-shift definitions for the uint16_t media_keys integer:
 #define MK_PLAY		 0

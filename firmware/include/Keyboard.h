@@ -91,9 +91,8 @@ typedef struct
 
 keyscan_report_t keyscan_report;
 
-
 // Function Prototypes:
-void SetupHardware(void);
+void SetupHIDHardware(void);
 void HID_Task(void);
 
 void EVENT_USB_Device_Connect(void);
