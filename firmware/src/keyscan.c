@@ -1,7 +1,6 @@
 #include "keyscan.h"
 
-
-
+// Initialise the gpio for scanning rows and columns.
 void keyscan_init(void)
 {
 	// Set rows as outputs and initialise all as high (disabled).
@@ -13,6 +12,7 @@ void keyscan_init(void)
 	KEYS_PORT |= ((1 << COL_1) | (1 << COL_2));
 }
 
+// Parse the detected key and update the appropriate part of the report struct.
 void handle_key(char key, keyscan_report_t *keyscan_report)
 {
 	// Media key scan values start at 0xF0, after the last keyboard modifier key scan.
@@ -20,7 +20,9 @@ void handle_key(char key, keyscan_report_t *keyscan_report)
 	{
 		// Convert the media key to a value from 0 to 10.
 		key -= HID_MEDIACONTROLLER_SC_PLAY;
-		keyscan_report->media_keys |= (1 << key);		
+
+		// Shift a bit to the corresponding bit within the media_keys integer.
+		keyscan_report->media_keys |= (1 << key);
 	}
 
 	// Modifier keys scan values start at 0xE0, after the last keyboard modifier key scan.
@@ -28,37 +30,43 @@ void handle_key(char key, keyscan_report_t *keyscan_report)
 	{
 		// Convert the media key to a value from 0 to 7.
 		key -= HID_KEYBOARD_SC_LEFT_CONTROL;
+
+		// Shift a bit to the corresponding bit within the modifier integer.
 		keyscan_report->modifier |= (1 << key);		
 	}
 
 	// Regular keys scan values range from 0x00 to 0x65.
 	else  if(key > HID_KEYBOARD_SC_RESERVED)
 	{
+		// Skip array elements that already have a keyscan value written.
 		uint8_t i = 0;
-		while(keyscan_report->keys[i]) i++;
-		if(i > 5) i = 0;
-		keyscan_report->keys[i] = key;
-	
-	}	
+		while((keyscan_report->keys[i]) && (i < MAX_KEYS)) i++;
 
+		// Only register the key if the maximum number of simultaneous keys is not reached.
+		if(i < MAX_KEYS) keyscan_report->keys[i] = key;
+	}
 }
 
 void create_keyscan_report(keyscan_report_t *keyscan_report)
 {
-
+	// Start with a blank keyscan report.
 	memset(keyscan_report, 0, sizeof(keyscan_report_t));
-	for(uint8_t i = 0; i < 6; i++) keyscan_report->keys[i] = 0x00;
+//	for(uint8_t i = 0; i < MAX_KEYS; i++) keyscan_report->keys[i] = 0x00;
 
-
-	uint8_t col_array[2] = {COL_1, COL_2};
+	// Define the pins to scan through.
 	uint8_t row_array[2] = {ROW_1, ROW_2};
+	uint8_t col_array[2] = {COL_1, COL_2};
 
+	// Loop through for each row.
 	for(uint8_t r = 0; r < 2; r++)
 	{
-		KEYS_PORT &= ~(1 << row_array[r]);	// Set low current row (enable check).
+		// Set low current row (enable check).
+		KEYS_PORT &= ~(1 << row_array[r]);
 
-		while(!(~KEYS_PINS & (1 << row_array[r]))) {}	// Wait until row is set low before continueing, otherwise column checks can be missed.
+		// Wait until row is set low before continuing, otherwise column checks can be missed.
+		while(!(~KEYS_PINS & (1 << row_array[r]))) {}
 
+		// Loop through for each column in the current row.
 		for(uint8_t c = 0; c < 2; c++)
 		{
 			if(~KEYS_PINS & (1 << col_array[c]))
@@ -68,85 +76,86 @@ void create_keyscan_report(keyscan_report_t *keyscan_report)
 		}
 
 		KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
+//		while((~KEYS_PINS & (1 << row_array[r]))) {}
 	}
 
 }
 
-char keyscan_get_keys(void)
-{
-	uint8_t col_array[2] = {COL_1, COL_2};
-	uint8_t row_array[2] = {ROW_1, ROW_2};
-
-	for(uint8_t r = 0; r < 2; r++)
-	{
-		KEYS_PORT &= ~(1 << row_array[r]);	// Set low current row (enable check).
-
-		while(!(~KEYS_PINS & (1 << row_array[r]))) {}	// Wait until row is set low before continueing, otherwise column checks can be missed.
-
-		for(uint8_t c = 0; c < 2; c++)
-		{
-			if(~KEYS_PINS & (1 << col_array[c]))
-			{
-				KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
-				return(pgm_read_byte(&KEYMAP[r][c]));
-//				return('a' + (2*r) + c);
-			}
-		}
-
-		KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
-	}
-
-	return(NO_KEY);
-}
+//char keyscan_get_keys(void)
+//{
+//	uint8_t col_array[2] = {COL_1, COL_2};
+//	uint8_t row_array[2] = {ROW_1, ROW_2};
+//
+//	for(uint8_t r = 0; r < 2; r++)
+//	{
+//		KEYS_PORT &= ~(1 << row_array[r]);	// Set low current row (enable check).
+//
+//		while(!(~KEYS_PINS & (1 << row_array[r]))) {}	// Wait until row is set low before continueing, otherwise column checks can be missed.
+//
+//		for(uint8_t c = 0; c < 2; c++)
+//		{
+//			if(~KEYS_PINS & (1 << col_array[c]))
+//			{
+//				KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
+//				return(pgm_read_byte(&KEYMAP[r][c]));
+////				return('a' + (2*r) + c);
+//			}
+//		}
+//
+//		KEYS_PORT |= (1 << row_array[r]);	// Set high current row (disable check).
+//	}
+//
+//	return(NO_KEY);
+//}
 
 //This function takes a character from the string and converts it to the value corresponding to the appropriate keystroke.
 //Refer to LUFA driver file LUFA/USB/CLASS/COMMON/HIDClassCommon.h
-uint8_t keyscan_char_to_key(char c)
-{
-	switch ((uint8_t)c)	//Typecast the character as an integer.
-	{
-		case 'A' ... 'Z' :	return ((uint8_t)c - 61);
-		case 'a' ... 'z' :	return ((uint8_t)c - 93);
-		case '1' ... '9' :	return ((uint8_t)c - 19);
-		case '0' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
-		case '!' :		return (HID_KEYBOARD_SC_1_AND_EXCLAMATION);
-		case '@' :		return (HID_KEYBOARD_SC_2_AND_AT);
-		case '#' :		return (HID_KEYBOARD_SC_3_AND_HASHMARK);
-		case '$' :		return (HID_KEYBOARD_SC_4_AND_DOLLAR);
-		case '%' :		return (HID_KEYBOARD_SC_5_AND_PERCENTAGE);
-		case '^' :		return (HID_KEYBOARD_SC_6_AND_CARET);
-		case '&' :		return (HID_KEYBOARD_SC_7_AND_AMPERSAND);
-		case '*' :		return (HID_KEYBOARD_SC_8_AND_ASTERISK);
-		case '(' :		return (HID_KEYBOARD_SC_9_AND_OPENING_PARENTHESIS);
-		case ')' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
-		case '\n':		return (HID_KEYBOARD_SC_ENTER);
-		case '\e':		return (HID_KEYBOARD_SC_ESCAPE);
-		case '\b':		return (HID_KEYBOARD_SC_BACKSPACE);
-		case '\t':		return (HID_KEYBOARD_SC_TAB);
-		case ' ' :		return (HID_KEYBOARD_SC_SPACE);
-		case '-' :
-		case '_' :		return (HID_KEYBOARD_SC_MINUS_AND_UNDERSCORE);
-		case '=' :
-		case '+' :		return (HID_KEYBOARD_SC_EQUAL_AND_PLUS);
-		case '[' :
-		case '{' :		return (HID_KEYBOARD_SC_OPENING_BRACKET_AND_OPENING_BRACE);
-		case ']' :
-		case '}' :		return (HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE);
-		case '\\':
-		case '|' :		return (HID_KEYBOARD_SC_BACKSLASH_AND_PIPE);
-		case ';' :
-		case ':' :		return (HID_KEYBOARD_SC_SEMICOLON_AND_COLON);
-		case '\'':
-		case '"' :		return (HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE);
-		case '`' :
-		case '~' :		return (HID_KEYBOARD_SC_GRAVE_ACCENT_AND_TILDE);
-		case ',' :
-		case '<' :		return (HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN);
-		case '.' :
-		case '>' :		return (HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN);
-		case '/' :
-		case '?' :		return (HID_KEYBOARD_SC_SLASH_AND_QUESTION_MARK);
-
-		default :		return NO_KEY;	//If there is no character match "fail" by sending a NO_KEY code.
-	}
-}
+//uint8_t keyscan_char_to_key(char c)
+//{
+//	switch ((uint8_t)c)	//Typecast the character as an integer.
+//	{
+//		case 'A' ... 'Z' :	return ((uint8_t)c - 61);
+//		case 'a' ... 'z' :	return ((uint8_t)c - 93);
+//		case '1' ... '9' :	return ((uint8_t)c - 19);
+//		case '0' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
+//		case '!' :		return (HID_KEYBOARD_SC_1_AND_EXCLAMATION);
+//		case '@' :		return (HID_KEYBOARD_SC_2_AND_AT);
+//		case '#' :		return (HID_KEYBOARD_SC_3_AND_HASHMARK);
+//		case '$' :		return (HID_KEYBOARD_SC_4_AND_DOLLAR);
+//		case '%' :		return (HID_KEYBOARD_SC_5_AND_PERCENTAGE);
+//		case '^' :		return (HID_KEYBOARD_SC_6_AND_CARET);
+//		case '&' :		return (HID_KEYBOARD_SC_7_AND_AMPERSAND);
+//		case '*' :		return (HID_KEYBOARD_SC_8_AND_ASTERISK);
+//		case '(' :		return (HID_KEYBOARD_SC_9_AND_OPENING_PARENTHESIS);
+//		case ')' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
+//		case '\n':		return (HID_KEYBOARD_SC_ENTER);
+//		case '\e':		return (HID_KEYBOARD_SC_ESCAPE);
+//		case '\b':		return (HID_KEYBOARD_SC_BACKSPACE);
+//		case '\t':		return (HID_KEYBOARD_SC_TAB);
+//		case ' ' :		return (HID_KEYBOARD_SC_SPACE);
+//		case '-' :
+//		case '_' :		return (HID_KEYBOARD_SC_MINUS_AND_UNDERSCORE);
+//		case '=' :
+//		case '+' :		return (HID_KEYBOARD_SC_EQUAL_AND_PLUS);
+//		case '[' :
+//		case '{' :		return (HID_KEYBOARD_SC_OPENING_BRACKET_AND_OPENING_BRACE);
+//		case ']' :
+//		case '}' :		return (HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE);
+//		case '\\':
+//		case '|' :		return (HID_KEYBOARD_SC_BACKSLASH_AND_PIPE);
+//		case ';' :
+//		case ':' :		return (HID_KEYBOARD_SC_SEMICOLON_AND_COLON);
+//		case '\'':
+//		case '"' :		return (HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE);
+//		case '`' :
+//		case '~' :		return (HID_KEYBOARD_SC_GRAVE_ACCENT_AND_TILDE);
+//		case ',' :
+//		case '<' :		return (HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN);
+//		case '.' :
+//		case '>' :		return (HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN);
+//		case '/' :
+//		case '?' :		return (HID_KEYBOARD_SC_SLASH_AND_QUESTION_MARK);
+//
+//		default :		return NO_KEY;	//If there is no character match "fail" by sending a NO_KEY code.
+//	}
+//}

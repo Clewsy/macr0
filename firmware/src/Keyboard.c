@@ -444,7 +444,7 @@ void HID_Task(void)
 
 	// Send the next keypress report to the host.
 	SendNextKeyboardReport();
-_delay_ms(1);
+//_delay_ms(1);
 
 	// Process the LED report sent from the host.
 	ReceiveNextKeyboardReport();
