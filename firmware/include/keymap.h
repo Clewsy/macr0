@@ -7,7 +7,8 @@
 const char KEYMAP[NUM_ROWS][NUM_COLS];
 
 // Key scan-codes:
-// Note these are defined in the lufa library file LUFA/Drivers/USB/Class/Common/HIDClassCommon.h but repeated again here for convenience.
+// Note these are defined in the lufa library file LUFA/Drivers/USB/Class/Common/HIDClassCommon.h but repeated again
+// here for convenience.
 #define HID_KEYBOARD_SC_RESERVED				0x00
 #define HID_KEYBOARD_SC_ERROR_ROLLOVER				0x01
 #define HID_KEYBOARD_SC_POST_FAIL				0x02

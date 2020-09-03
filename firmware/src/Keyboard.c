@@ -39,25 +39,25 @@
 
 #include "Keyboard.h"
 
-// Indicates what report mode the host has requested, true for normal HID reporting mode, false for special boot protocol reporting mode.
+// Indicates what report mode the host has requested, true for normal HID reporting mode, false for special boot
+// protocol reporting mode.
 static bool UsingReportProtocol = true;
 
-// Current Idle period. This is set by the host via a Set Idle HID class request to silence the device's reports for either the entire idle duration,
-// or until the report status changes (e.g. the user presses a key).
+// Current Idle period. This is set by the host via a Set Idle HID class request to silence the device's reports for 
+// either the entire idle duration, or until the report status changes (e.g. the user presses a key).
 static uint16_t IdleCount = 500;
 
-// Current Idle period remaining. When the IdleCount value is set, this tracks the remaining number of idle milliseconds.
-// This is separate to the IdleCount timer and is incremented and compared as the host may request the current idle period via a Get Idle HID class request,
-// thus its value must be preserved.
+// Current Idle period remaining. When the IdleCount value is set, tracks the remaining number of idle milliseconds.
+// This is separate to the IdleCount timer and is incremented and compared as the host may request the current idle
+// period via a Get Idle HID class request, thus its value must be preserved.
 static uint16_t IdleMSRemaining = 0;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // clewsy: main function taken out of Keyboard.c and is instead in macr0.c
 //int main(void)
 //{
 //	SetupHardware();
 //
-//	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 //	GlobalInterruptEnable();
 //
 //	for (;;)
@@ -84,26 +84,25 @@ void SetupHIDHardware(void)
 //	Buttons_Init();
 }
 
-// Event handler for the USB_Connect event. This indicates that the device is enumerating via the status LEDs and starts the library USB task
-// to begin the enumeration and USB management process.
+// Event handler for the USB_Connect event. This indicates that the device is enumerating via the status LEDs and starts
+// the library USB task to begin the enumeration and USB management process.
 void EVENT_USB_Device_Connect(void)
 {
 	// Indicate USB enumerating.
 //	LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
-
 	// Default to report protocol on connect.
 	UsingReportProtocol = true;
 }
 
-// Event handler for the USB_Disconnect event. This indicates that the device is no longer connected to a host via the status LEDs.
+// Event handler for the USB_Disconnect event. This indicates that the device is no longer connected to a host.
 void EVENT_USB_Device_Disconnect(void)
 {
 	// Indicate USB not ready.
 //	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 }
 
-// Event handler for the USB_ConfigurationChanged event. This is fired when the host sets the current configuration of the USB device after enumeration,
-// and configures the keyboard device endpoints.
+// Event handler for the USB_ConfigurationChanged event. This is fired when the host sets the current configuration of
+// the USB device after enumeration, and configures the keyboard device endpoints.
 void EVENT_USB_Device_ConfigurationChanged(void)
 {
 	bool ConfigSuccess = true;
@@ -120,8 +119,8 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 //	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
 }
 
-// Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to the device from the USB host before
-// passing along unhandled control requests to the library for processing internally.
+// Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to the device
+// from the USB host before passing along unhandled control requests to the library for processing internally.
 void EVENT_USB_Device_ControlRequest(void)
 {
 	// Handle HID Class specific requests.
@@ -197,7 +196,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				Endpoint_ClearSETUP();
 				Endpoint_ClearStatusStage();
 
-				// Set or clear the flag depending on what the host indicates that the current Protocol should be.
+				// Set or clear the flag depending on what the host indicates is the current Protocol.
 				UsingReportProtocol = (USB_ControlRequest.wValue != 0);
 			}
 			break;
@@ -208,7 +207,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				Endpoint_ClearSETUP();
 				Endpoint_ClearStatusStage();
 
-				// Get idle period in MSB, IdleCount must be multiplied by 4 to get number of milliseconds.
+				// Get idle period in MSB, IdleCount must be multiplied by 4 to get milliseconds.
 				IdleCount = ((USB_ControlRequest.wValue & 0xFF00) >> 6);
 			}
 			break;
@@ -218,7 +217,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			{
 				Endpoint_ClearSETUP();
 
-				// Write the current idle duration to the host, must be divided by 4 before sent to host.
+				// Write the current idle duration to the host.  Must be divided by 4 before send.
 				Endpoint_Write_8(IdleCount >> 2);
 
 				Endpoint_ClearIN();
@@ -236,8 +235,9 @@ void EVENT_USB_Device_StartOfFrame(void)
 }
 
 // Fills the given HID report data structure with the next keyboard HID input report to send to the host.
-// ReportData  Pointer to a HID report data structure to be filled.
-// clewsy: create HID report function significantly changed.  Report data derived from keyscan report created by the create_keyscan_report() function in keyscan.c.
+// ReportData: Pointer to a HID report data structure to be filled.
+// clewsy: create HID report function significantly changed.  Report data derived from keyscan report created by the
+// create_keyscan_report() function in keyscan.c.
 void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 {
 	// Clear the report contents.
@@ -251,7 +251,7 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 }
 
 // Fills the given HID report data structure with the next media controller HID input report to send to the host.
-// MediaReportData  Pointer to a HID report data structure to be filled.
+// MediaReportData:  Pointer to a HID report data structure to be filled.
 // clewsy: created this function from scratch, same concept as keyboard version.
 void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaReportData)
 {
@@ -259,21 +259,21 @@ void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaRe
 	memset(MediaReportData, 0, sizeof(USB_MediaControllerReport_Data_t));
 
 	// Update the Media Control report flags from the latest keyscan report.
-	MediaReportData->Play		= (keyscan_report.media_keys & (1 << MK_PLAY) ? true : false);
-	MediaReportData->Pause		= (keyscan_report.media_keys & (1 << MK_PAUSE) ? true : false);
-	MediaReportData->FForward	= (keyscan_report.media_keys & (1 << MK_FF) ? true : false);
-	MediaReportData->Rewind		= (keyscan_report.media_keys & (1 << MK_RW) ? true : false);
-	MediaReportData->NextTrack	= (keyscan_report.media_keys & (1 << MK_NEXT) ? true : false);
-	MediaReportData->PreviousTrack	= (keyscan_report.media_keys & (1 << MK_PREVIOUS) ? true : false);
-	MediaReportData->Stop		= (keyscan_report.media_keys & (1 << MK_STOP) ? true : false);
-	MediaReportData->PlayPause	= (keyscan_report.media_keys & (1 << MK_TOGGLE) ? true : false);
-	MediaReportData->Mute		= (keyscan_report.media_keys & (1 << MK_MUTE) ? true : false);
-	MediaReportData->VolumeUp	= (keyscan_report.media_keys & (1 << MK_VOL_UP) ? true : false);
-	MediaReportData->VolumeDown	= (keyscan_report.media_keys & (1 << MK_VOL_DOWN) ? true : false);
+	MediaReportData->Play		= (keyscan_report.media_keys & (1 << MK_PLAY)		? true : false);
+	MediaReportData->Pause		= (keyscan_report.media_keys & (1 << MK_PAUSE)		? true : false);
+	MediaReportData->FForward	= (keyscan_report.media_keys & (1 << MK_FF)		? true : false);
+	MediaReportData->Rewind		= (keyscan_report.media_keys & (1 << MK_RW)		? true : false);
+	MediaReportData->NextTrack	= (keyscan_report.media_keys & (1 << MK_NEXT)		? true : false);
+	MediaReportData->PreviousTrack	= (keyscan_report.media_keys & (1 << MK_PREVIOUS)	? true : false);
+	MediaReportData->Stop		= (keyscan_report.media_keys & (1 << MK_STOP)		? true : false);
+	MediaReportData->PlayPause	= (keyscan_report.media_keys & (1 << MK_TOGGLE)		? true : false);
+	MediaReportData->Mute		= (keyscan_report.media_keys & (1 << MK_MUTE)		? true : false);
+	MediaReportData->VolumeUp	= (keyscan_report.media_keys & (1 << MK_VOL_UP)		? true : false);
+	MediaReportData->VolumeDown	= (keyscan_report.media_keys & (1 << MK_VOL_DOWN)	? true : false);
 }
 
 // Processes a received LED report, and updates the board LEDs states to match.
-// LEDReport LED status report from the host.
+// LEDReport: LED status report from the host.
 // clewsy: Commented for now, may remove completely depending on how I decide to control LEDs on the custom board.
 void ProcessLEDReport(const uint8_t LEDReport)
 {
@@ -336,6 +336,7 @@ void SendNextKeyboardReport(void)
 
 
 // Sends the next media controller HID report to the host, via the keyboard data endpoint.
+// clewsy: This function is very similar to the keyboard equivalent but was created for media controller reports.
 void SendNextMediaControllerReport(void)
 {
 	static USB_MediaControllerReport_Data_t	PrevMediaControllerReportData;
@@ -408,6 +409,7 @@ void HID_Task(void)
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
 
+	// clewsy: Update the keyscan report - will be used for creating both the keyboard and media controller reports.
 	create_keyscan_report(&keyscan_report);
 
 	// Send the next keypress report to the host.
@@ -416,8 +418,7 @@ void HID_Task(void)
 	// Process the LED report sent from the host.
 	ReceiveNextKeyboardReport();
 
-	// Send the next media controller keypress report to the host.
+	// clewsy: Send the next media controller keypress report to the host.
 	SendNextMediaControllerReport();
 
 }
-

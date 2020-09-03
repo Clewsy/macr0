@@ -9,7 +9,8 @@ void cat4104_init(void)
 	// WGM[1:0] set to 00 : Fast PWM mode.
 	// COM[1:0] set to 10 : Clear on compare match, set at bottom (TCNT4 = 0x00), OC4A pin connected.
 	// PWM_AE set to enable PWM on comparator A.
-	// CS[3:0] set to 1111 : clk = CK/16384 = 250000Hz.  PWM_freq = clk/256 = 964.5625Hz (CAT4104 rated for PWM control frequency range 100Hz to 5000Hz).
+	// CS[3:0] set to 0111 : clk = CK/64 = 250,000Hz.  PWM_freq = clk/256 = 964.5625Hz
+	// 	(CAT4104 rated for PWM control frequency range 100Hz to 5,000Hz).
 	PWM_TCCRA |= ((1 << PWM_COM1) | (1 << PWM_AE));
 	PWM_TCCRB |= ((0 << PWM_CS3) | (1 << PWM_CS2) | (1 << PWM_CS1) | (1 << PWM_CS0));
 

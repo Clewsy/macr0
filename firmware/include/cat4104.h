@@ -1,8 +1,8 @@
 #include <avr/io.h>
 
-#define PWM_PORT	PORTC
-#define PWM_DDR		DDRC
-#define PWM_PIN		PC7
+#define PWM_PORT	PORTC		// The port register that includes the pwm pin.
+#define PWM_DDR		DDRC		// Data direction register that corresponds to the relevant port.
+#define PWM_PIN		PC7		// The pin to which the PWM signal will be connected.
 
 #define PWM_SET		OCR4A		// Output compare register (writing 8-bits to here sets the pulse-width).
 #define PWM_TCCRA	TCCR4A		// Timer/Counter Control Register
@@ -20,7 +20,7 @@
 #define PWM_CS2		CS42		// Clock Select Bit 2
 #define PWM_CS3		CS43		// Clock Select Bit 3
 
-#define PWM_INIT_VAL	250		// Initial duty cycle value.
+#define PWM_INIT_VAL	50		// Initial duty cycle value (0 to 255).
 
 // Function prototypes.
 void cat4104_init(void);
