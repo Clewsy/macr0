@@ -56,9 +56,9 @@
 	#include "keyscan.h"
 
 	// Type Defines:
-	// Type define for a Media Control HID report. This report contains the bits to match the usages defined in the
-	// HID report of the device.  When set to a true, the relevant media controls on the host will be triggered.
-	// clewsy: note, the equivalent struct for keyboard is defined in the lufa library HIDClassCommon.h file.
+	// clewsy: Type define for a Media Control HID report. This report contains the bits to match the usages defined
+	// in the HID report of the device.  When set to a true, the relevant media controls on the host will be
+	// triggered.  Note, the equivalent struct for keyboard is defined in the lufa library HIDClassCommon.h file.
 	typedef struct
 	{
 		unsigned Play           : 1;
@@ -74,8 +74,6 @@
 		unsigned VolumeDown     : 1;
 		unsigned RESERVED       : 5;
 	} ATTR_PACKED USB_MediaControllerReport_Data_t;
-
-	keyscan_report_t keyscan_report;
 
 	// Function Prototypes:
 	void SetupHIDHardware(void);

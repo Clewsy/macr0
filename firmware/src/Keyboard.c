@@ -52,6 +52,10 @@ static uint16_t IdleCount = 500;
 // period via a Get Idle HID class request, thus its value must be preserved.
 static uint16_t IdleMSRemaining = 0;
 
+// clewsy: Declaration of a keyscan_report_t structure that will be used to pass current keypresses to the keyboard
+// reports and the media controller reports. 
+static keyscan_report_t keyscan_report;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // clewsy: main function taken out of Keyboard.c and is instead in macr0.c
 //int main(void)

@@ -28,7 +28,8 @@
 #define MK_VOL_UP	 9
 #define MK_VOL_DOWN	10
 
-// See comments bellow for a breakdown of this struct.
+// clewsy: Type define for a keyscan report which contains data identifying any current keypresses.
+// See comments below for a breakdown of this struct.
 typedef struct
 {
 	uint16_t media_keys;
