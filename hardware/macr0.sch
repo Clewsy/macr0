@@ -27,23 +27,12 @@ $EndComp
 $Comp
 L Switch:SW_Push_LED S1
 U 1 1 5F154BF5
-P 2200 1400
-F 0 "S1" H 2200 1750 50  0000 C CNN
-F 1 "SW_Push_LED" H 2200 1650 50  0000 C CNN
-F 2 "macr0:Gateron_LED_1.00u_Plate" H 2200 1700 50  0001 C CNN
-F 3 "~" H 2200 1700 50  0001 C CNN
-	1    2200 1400
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:D D1
-U 1 1 5F1550D8
-P 1800 1300
-F 0 "D1" H 1800 1516 50  0000 C CNN
-F 1 "1N4148" H 1800 1425 50  0000 C CNN
-F 2 "Diode_SMD:D_SOD-123" H 1800 1300 50  0001 C CNN
-F 3 "~" H 1800 1300 50  0001 C CNN
-	1    1800 1300
+P 1800 1150
+F 0 "S1" H 1800 1250 50  0000 C CNN
+F 1 "SW_Push_LED" H 1800 1400 50  0000 C CNN
+F 2 "macr0:Gateron_LED_1.00u_Plate" H 1800 1450 50  0001 C CNN
+F 3 "~" H 1800 1450 50  0001 C CNN
+	1    1800 1150
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -52,7 +41,7 @@ U 1 1 5F155503
 P 1600 3800
 F 0 "Y1" V 1500 3900 50  0000 C CNN
 F 1 "16MHz" V 1750 3950 50  0000 C CNN
-F 2 "Crystal:Crystal_SMD_HC49-SD_HandSoldering" H 1600 3800 50  0001 C CNN
+F 2 "Crystal:Crystal_SMD_HC49-SD" H 1600 3800 50  0001 C CNN
 F 3 "~" H 1600 3800 50  0001 C CNN
 	1    1600 3800
 	0    1    1    0   
@@ -69,10 +58,10 @@ F 3 "~" H 1900 5000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R1
+L Device:R R01
 U 1 1 5F155D51
 P 1900 3300
-F 0 "R1" H 1750 3300 50  0000 L CNN
+F 0 "R01" V 1900 3200 50  0000 L CNN
 F 1 "10k" H 1950 3350 50  0000 L CNN
 F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 1830 3300 50  0001 C CNN
 F 3 "~" H 1900 3300 50  0001 C CNN
@@ -88,17 +77,6 @@ F 1 "AVR-ISP-6" H 8621 2305 50  0000 R CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical" V 8700 2350 50  0001 C CNN
 F 3 " ~" H 7675 1750 50  0001 C CNN
 	1    8950 2300
-	1    0    0    -1  
-$EndComp
-$Comp
-L macr0:CAT4104 U2
-U 1 1 5F15777C
-P 9050 4300
-F 0 "U2" H 9050 4765 50  0000 C CNN
-F 1 "CAT4104" H 9050 4674 50  0000 C CNN
-F 2 "macr0:CAT4101" H 9050 4300 50  0001 C CNN
-F 3 "" H 9050 4300 50  0001 C CNN
-	1    9050 4300
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -245,39 +223,16 @@ $EndComp
 Wire Wire Line
 	2550 3100 2550 3050
 $Comp
-L Device:R R2
-U 1 1 5F169C2C
-P 3200 3300
-F 0 "R2" H 3250 3300 50  0000 L CNN
-F 1 "10k" H 3000 3350 50  0000 L CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 3130 3300 50  0001 C CNN
-F 3 "~" H 3200 3300 50  0001 C CNN
-	1    3200 3300
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	2650 3100 3200 3100
-Wire Wire Line
-	3200 3100 3200 3150
-Connection ~ 2650 3100
-Wire Wire Line
-	3150 3500 3200 3500
-Wire Wire Line
-	3200 3500 3200 3450
-$Comp
 L Switch:SW_Push S0
 U 1 1 5F16C01A
 P 3450 3500
 F 0 "S0" H 3550 3450 50  0000 C CNN
-F 1 "BRIGHTNESS" H 3600 3650 50  0000 C CNN
+F 1 "DIMMER" H 3450 3650 50  0000 C CNN
 F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm" H 3450 3700 50  0001 C CNN
 F 3 "~" H 3450 3700 50  0001 C CNN
 	1    3450 3500
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3250 3500 3200 3500
-Connection ~ 3200 3500
 $Comp
 L power:GND #PWR0105
 U 1 1 5F16EA5D
@@ -315,13 +270,13 @@ Wire Wire Line
 NoConn ~ 3150 4400
 NoConn ~ 3150 4200
 Text GLabel 3200 4700 2    50   Input ~ 0
-ROW1
+KEY1
 Text GLabel 3200 4800 2    50   Input ~ 0
-ROW2
+KEY2
 Text GLabel 3200 4900 2    50   Input ~ 0
-COL1
+KEY3
 Text GLabel 3200 5000 2    50   Input ~ 0
-COL2
+KEY4
 Wire Wire Line
 	3200 5000 3150 5000
 Wire Wire Line
@@ -364,168 +319,63 @@ Wire Wire Line
 Connection ~ 2500 6850
 Wire Wire Line
 	2500 6850 2550 6850
-Text GLabel 1950 1400 0    50   Input ~ 0
+Text GLabel 1550 1150 0    50   Input ~ 0
 LED1
-Text GLabel 1550 1500 0    50   Input ~ 0
-ROW1
-Text GLabel 1550 2050 0    50   Input ~ 0
-ROW2
-Text GLabel 2400 950  0    50   Input ~ 0
-COL1
-Text GLabel 3300 950  0    50   Input ~ 0
-COL2
-$Comp
-L power:+5V #PWR0107
-U 1 1 5F1922CC
-P 3400 950
-F 0 "#PWR0107" H 3400 800 50  0001 C CNN
-F 1 "+5V" H 3400 1100 50  0000 C CNN
-F 2 "" H 3400 950 50  0001 C CNN
-F 3 "" H 3400 950 50  0001 C CNN
-	1    3400 950 
-	1    0    0    -1  
-$EndComp
+Text GLabel 1550 1050 0    50   Input ~ 0
+KEY1
+Text GLabel 1550 1450 0    50   Input ~ 0
+KEY3
+Text GLabel 2350 1050 0    50   Input ~ 0
+KEY2
+Text GLabel 2350 1450 0    50   Input ~ 0
+KEY4
 Wire Wire Line
-	2000 1400 1950 1400
+	1600 1150 1550 1150
 Wire Wire Line
-	1950 1300 2000 1300
+	1550 1050 1600 1050
 Wire Wire Line
-	1650 1300 1600 1300
-Wire Wire Line
-	1600 1300 1600 1500
-Wire Wire Line
-	1600 1500 2500 1500
-Wire Wire Line
-	2500 1500 2500 1300
-Wire Wire Line
-	2500 1300 2550 1300
-$Comp
-L Device:D D2
-U 1 1 5F195398
-P 2700 1300
-F 0 "D2" H 2700 1516 50  0000 C CNN
-F 1 "1N4148" H 2700 1425 50  0000 C CNN
-F 2 "Diode_SMD:D_SOD-123" H 2700 1300 50  0001 C CNN
-F 3 "~" H 2700 1300 50  0001 C CNN
-	1    2700 1300
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	2850 1300 2900 1300
+	2350 1050 2400 1050
 $Comp
 L Switch:SW_Push_LED S2
 U 1 1 5F19680E
-P 3100 1400
-F 0 "S2" H 3100 1750 50  0000 C CNN
-F 1 "SW_Push_LED" H 3100 1650 50  0000 C CNN
-F 2 "macr0:Gateron_LED_1.00u_Plate" H 3100 1700 50  0001 C CNN
-F 3 "~" H 3100 1700 50  0001 C CNN
-	1    3100 1400
+P 2600 1150
+F 0 "S2" H 2600 1250 50  0000 C CNN
+F 1 "SW_Push_LED" H 2600 1400 50  0000 C CNN
+F 2 "macr0:Gateron_LED_1.00u_Plate" H 2600 1450 50  0001 C CNN
+F 3 "~" H 2600 1450 50  0001 C CNN
+	1    2600 1150
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2400 1400 2900 1400
 $Comp
 L Switch:SW_Push_LED S3
 U 1 1 5F1980EC
-P 2200 1950
-F 0 "S3" H 2200 2300 50  0000 C CNN
-F 1 "SW_Push_LED" H 2200 2200 50  0000 C CNN
-F 2 "macr0:Gateron_LED_1.00u_Plate" H 2200 2250 50  0001 C CNN
-F 3 "~" H 2200 2250 50  0001 C CNN
-	1    2200 1950
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:D D3
-U 1 1 5F198640
-P 1800 1850
-F 0 "D3" H 1800 2066 50  0000 C CNN
-F 1 "1N4148" H 1800 1975 50  0000 C CNN
-F 2 "Diode_SMD:D_SOD-123" H 1800 1850 50  0001 C CNN
+P 1800 1550
+F 0 "S3" H 1800 1650 50  0000 C CNN
+F 1 "SW_Push_LED" H 1800 1800 50  0000 C CNN
+F 2 "macr0:Gateron_LED_1.00u_Plate" H 1800 1850 50  0001 C CNN
 F 3 "~" H 1800 1850 50  0001 C CNN
-	1    1800 1850
+	1    1800 1550
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1650 1850 1600 1850
-Wire Wire Line
-	1600 1850 1600 2050
-Wire Wire Line
-	1600 2050 2500 2050
-Wire Wire Line
-	2500 2050 2500 1850
-Wire Wire Line
-	2500 1850 2550 1850
-$Comp
-L Device:D D4
-U 1 1 5F19A132
-P 2700 1850
-F 0 "D4" H 2700 2066 50  0000 C CNN
-F 1 "1N4148" H 2700 1975 50  0000 C CNN
-F 2 "Diode_SMD:D_SOD-123" H 2700 1850 50  0001 C CNN
-F 3 "~" H 2700 1850 50  0001 C CNN
-	1    2700 1850
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	2850 1850 2900 1850
+	2350 1450 2400 1450
 $Comp
 L Switch:SW_Push_LED S4
 U 1 1 5F19BBF5
-P 3100 1950
-F 0 "S4" H 3100 2300 50  0000 C CNN
-F 1 "SW_Push_LED" H 3100 2200 50  0000 C CNN
-F 2 "macr0:Gateron_LED_1.00u_Plate" H 3100 2250 50  0001 C CNN
-F 3 "~" H 3100 2250 50  0001 C CNN
-	1    3100 1950
+P 2600 1550
+F 0 "S4" H 2600 1650 50  0000 C CNN
+F 1 "SW_Push_LED" H 2600 1800 50  0000 C CNN
+F 2 "macr0:Gateron_LED_1.00u_Plate" H 2600 1850 50  0001 C CNN
+F 3 "~" H 2600 1850 50  0001 C CNN
+	1    2600 1550
 	1    0    0    -1  
 $EndComp
-Text GLabel 1950 1950 0    50   Input ~ 0
-LED2
+Text GLabel 1550 1550 0    50   Input ~ 0
+LED3
 Wire Wire Line
-	2000 1950 1950 1950
+	1600 1550 1550 1550
 Wire Wire Line
-	1950 1850 2000 1850
-Wire Wire Line
-	2900 1950 2400 1950
-Wire Wire Line
-	2400 1850 2450 1850
-Wire Wire Line
-	2450 1850 2450 1300
-Wire Wire Line
-	2450 1300 2400 1300
-Wire Wire Line
-	3300 1850 3350 1850
-Wire Wire Line
-	3350 1850 3350 1300
-Wire Wire Line
-	3350 1300 3300 1300
-Wire Wire Line
-	1550 1500 1600 1500
-Connection ~ 1600 1500
-Wire Wire Line
-	1600 2050 1550 2050
-Connection ~ 1600 2050
-Wire Wire Line
-	3300 1950 3400 1950
-Wire Wire Line
-	3400 1950 3400 1400
-Wire Wire Line
-	3300 1400 3400 1400
-Wire Wire Line
-	3400 950  3400 1400
-Connection ~ 3400 1400
-Wire Wire Line
-	3350 1300 3350 950 
-Wire Wire Line
-	3350 950  3300 950 
-Connection ~ 3350 1300
-Wire Wire Line
-	2450 1300 2450 950 
-Wire Wire Line
-	2450 950  2400 950 
-Connection ~ 2450 1300
+	1550 1450 1600 1450
 $Comp
 L Device:C C4
 U 1 1 5F1D2F78
@@ -538,10 +388,10 @@ F 3 "~" H 5900 2300 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R R3
+L Device:R R02
 U 1 1 5F1D3444
 P 6250 2750
-F 0 "R3" V 6250 2700 50  0000 L CNN
+F 0 "R02" V 6250 2700 50  0000 L CNN
 F 1 "5k1" V 6150 2700 50  0000 L CNN
 F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 6180 2750 50  0001 C CNN
 F 3 "~" H 6250 2750 50  0001 C CNN
@@ -549,10 +399,10 @@ F 3 "~" H 6250 2750 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R R4
+L Device:R R03
 U 1 1 5F1D5757
 P 6250 2850
-F 0 "R4" V 6250 2800 50  0000 L CNN
+F 0 "R03" V 6250 2800 50  0000 L CNN
 F 1 "5k1" V 6350 2800 50  0000 L CNN
 F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 6180 2850 50  0001 C CNN
 F 3 "~" H 6250 2850 50  0001 C CNN
@@ -560,25 +410,14 @@ F 3 "~" H 6250 2850 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R R5
+L Device:R R04
 U 1 1 5F1D59DE
 P 6300 3150
-F 0 "R5" V 6300 3100 50  0000 L CNN
+F 0 "R04" V 6300 3100 50  0000 L CNN
 F 1 "22" V 6200 3100 50  0000 L CNN
 F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 6230 3150 50  0001 C CNN
 F 3 "~" H 6300 3150 50  0001 C CNN
 	1    6300 3150
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R R6
-U 1 1 5F1D5D1C
-P 6300 3350
-F 0 "R6" V 6300 3300 50  0000 L CNN
-F 1 "22" V 6400 3300 50  0000 L CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 6230 3350 50  0001 C CNN
-F 3 "~" H 6300 3350 50  0001 C CNN
-	1    6300 3350
 	0    1    1    0   
 $EndComp
 $Comp
@@ -687,67 +526,31 @@ Wire Wire Line
 $Comp
 L power:+5V #PWR0114
 U 1 1 5F223AA0
-P 8500 4100
-F 0 "#PWR0114" H 8500 3950 50  0001 C CNN
-F 1 "+5V" H 8500 4250 50  0000 C CNN
-F 2 "" H 8500 4100 50  0001 C CNN
-F 3 "" H 8500 4100 50  0001 C CNN
-	1    8500 4100
+P 9200 4050
+F 0 "#PWR0114" H 9200 3900 50  0001 C CNN
+F 1 "+5V" H 9200 4200 50  0000 C CNN
+F 2 "" H 9200 4050 50  0001 C CNN
+F 3 "" H 9200 4050 50  0001 C CNN
+	1    9200 4050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	8850 2750 8850 2700
 $Comp
-L power:GND #PWR0115
-U 1 1 5F2284B1
-P 9050 4750
-F 0 "#PWR0115" H 9050 4500 50  0001 C CNN
-F 1 "GND" H 9050 4600 50  0000 C CNN
-F 2 "" H 9050 4750 50  0001 C CNN
-F 3 "" H 9050 4750 50  0001 C CNN
-	1    9050 4750
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R R7
+L Device:R R6
 U 1 1 5F22A0B7
-P 8700 4700
-F 0 "R7" V 8700 4650 50  0000 L CNN
-F 1 "6k" V 8800 4650 50  0000 L CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 8630 4700 50  0001 C CNN
-F 3 "~" H 8700 4700 50  0001 C CNN
-	1    8700 4700
+P 8700 4300
+F 0 "R6" V 8700 4250 50  0000 L CNN
+F 1 "7k5" V 8800 4250 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 8630 4300 50  0001 C CNN
+F 3 "~" H 8700 4300 50  0001 C CNN
+	1    8700 4300
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	8550 4450 8500 4450
-Wire Wire Line
-	8500 4450 8500 4700
-Wire Wire Line
-	8500 4700 8550 4700
-Wire Wire Line
-	8850 4700 9050 4700
-Wire Wire Line
-	9050 4700 9050 4650
-Wire Wire Line
-	9050 4750 9050 4700
-Connection ~ 9050 4700
-Wire Wire Line
-	8550 4150 8500 4150
-Wire Wire Line
-	8500 4150 8500 4100
 Text GLabel 8500 4300 0    50   Input ~ 0
 LED_PWM
-Text GLabel 9600 4150 2    50   Input ~ 0
+Text GLabel 8900 4950 3    50   Input ~ 0
 LED1
-Text GLabel 9600 4250 2    50   Input ~ 0
-LED2
-NoConn ~ 9550 4450
-NoConn ~ 9550 4350
-Wire Wire Line
-	9550 4250 9600 4250
-Wire Wire Line
-	9600 4150 9550 4150
 Wire Wire Line
 	8550 4300 8500 4300
 $Comp
@@ -792,7 +595,7 @@ macr0 - USB HID 2x2 Button Matrix with LED Illumination
 Text Notes 8100 7650 0    79   ~ 0
 20200726
 Text Notes 10550 7650 0    79   ~ 0
-1
+2
 Wire Wire Line
 	6050 3050 6100 3050
 Wire Wire Line
@@ -823,20 +626,12 @@ Text Notes 5100 1800 0    50   ~ 0
 USB-C Receptacle\nConfigured to identify as USB 2.0 Device
 Text Notes 8200 1550 0    50   ~ 0
 AVR In-System Programmer
-Text Notes 8100 3750 0    50   ~ 0
-CAT4104 Constand Current LED Driver
+Text Notes 8150 3950 0    50   ~ 0
+LED Driver
 Text Notes 1300 850  0    50   ~ 0
-2x2 Button Matrix
+Key Switches with LEDs
 Text Notes 1150 2900 0    50   ~ 0
 ATmega32U4 AVR Microcontroller
-Wire Notes Line
-	1250 750  1250 2150
-Wire Notes Line
-	1250 2150 3500 2150
-Wire Notes Line
-	3500 2150 3500 750 
-Wire Notes Line
-	3500 750  1250 750 
 Wire Notes Line
 	1100 2800 1100 7150
 Wire Notes Line
@@ -853,14 +648,6 @@ Wire Notes Line
 	9750 2950 9750 1450
 Wire Notes Line
 	9750 1450 8150 1450
-Wire Notes Line
-	8050 3650 8050 4950
-Wire Notes Line
-	8050 4950 9900 4950
-Wire Notes Line
-	9900 4950 9900 3650
-Wire Notes Line
-	9900 3650 8050 3650
 $Comp
 L macr0:usb-c_2.0 J1
 U 1 1 5F294BD5
@@ -911,4 +698,183 @@ Wire Notes Line
 	6700 4000 6700 1600
 Wire Notes Line
 	6700 1600 5050 1600
+Text Notes 7000 7050 0    79   ~ 0
+Rev 2 Changes:\n- No key matrix - each key connected directly to a gpio pin.\n- No LED driver, instead LEDs controlled via PWM and transistor.\n- Removed external pull-up from dimmer push-button.
+Wire Wire Line
+	3150 3500 3250 3500
+Text GLabel 2350 1550 0    50   Input ~ 0
+LED4
+Text GLabel 2350 1150 0    50   Input ~ 0
+LED2
+Wire Wire Line
+	2000 1050 2050 1050
+Wire Wire Line
+	2050 1050 2050 1150
+Wire Wire Line
+	2050 1550 2000 1550
+Wire Wire Line
+	2000 1450 2050 1450
+Wire Wire Line
+	2050 1450 2050 1550
+Wire Wire Line
+	2000 1150 2050 1150
+Wire Wire Line
+	2050 1150 2050 1450
+Connection ~ 2050 1150
+Connection ~ 2050 1450
+Wire Wire Line
+	2800 1050 2850 1050
+Wire Wire Line
+	2850 1050 2850 1150
+Wire Wire Line
+	2850 1550 2800 1550
+Wire Wire Line
+	2800 1450 2850 1450
+Connection ~ 2850 1450
+Wire Wire Line
+	2850 1450 2850 1550
+Wire Wire Line
+	2800 1150 2850 1150
+Connection ~ 2850 1150
+Wire Wire Line
+	2850 1150 2850 1450
+Wire Wire Line
+	2400 1150 2350 1150
+Wire Wire Line
+	2350 1550 2400 1550
+$Comp
+L power:GND #PWR0107
+U 1 1 5F5DA959
+P 2850 1600
+F 0 "#PWR0107" H 2850 1350 50  0001 C CNN
+F 1 "GND" H 2850 1450 50  0000 C CNN
+F 2 "" H 2850 1600 50  0001 C CNN
+F 3 "" H 2850 1600 50  0001 C CNN
+	1    2850 1600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2850 1600 2850 1550
+Connection ~ 2850 1550
+Wire Notes Line
+	1250 750  1250 1800
+Wire Notes Line
+	1250 1800 2950 1800
+Wire Notes Line
+	2950 1800 2950 750 
+Wire Notes Line
+	2950 750  1250 750 
+$Comp
+L Device:Q_PNP_BCE Q1
+U 1 1 5F5F3472
+P 9100 4300
+F 0 "Q1" H 9290 4254 50  0000 L CNN
+F 1 "Q_PNP_BCE" H 9250 4400 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" H 9300 4400 50  0001 C CNN
+F 3 "~" H 9100 4300 50  0001 C CNN
+	1    9100 4300
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:R R05
+U 1 1 5F1D5D1C
+P 6300 3350
+F 0 "R05" V 6300 3300 50  0000 L CNN
+F 1 "22" V 6400 3300 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 6230 3350 50  0001 C CNN
+F 3 "~" H 6300 3350 50  0001 C CNN
+	1    6300 3350
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8900 4300 8850 4300
+$Comp
+L Device:R R07
+U 1 1 5F6000E9
+P 8900 4750
+F 0 "R07" V 8900 4700 50  0000 L CNN
+F 1 "50" H 8900 4900 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 8830 4750 50  0001 C CNN
+F 3 "~" H 8900 4750 50  0001 C CNN
+	1    8900 4750
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8900 4900 8900 4950
+Wire Wire Line
+	9100 4950 9100 4900
+Wire Wire Line
+	9300 4900 9300 4950
+Wire Wire Line
+	9500 4950 9500 4900
+$Comp
+L Device:R R10
+U 1 1 5F605532
+P 9500 4750
+F 0 "R10" V 9500 4700 50  0000 L CNN
+F 1 "50" H 9500 4900 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 9430 4750 50  0001 C CNN
+F 3 "~" H 9500 4750 50  0001 C CNN
+	1    9500 4750
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R09
+U 1 1 5F604E93
+P 9300 4750
+F 0 "R09" V 9300 4700 50  0000 L CNN
+F 1 "50" H 9300 4900 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 9230 4750 50  0001 C CNN
+F 3 "~" H 9300 4750 50  0001 C CNN
+	1    9300 4750
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R08
+U 1 1 5F604976
+P 9100 4750
+F 0 "R08" V 9100 4700 50  0000 L CNN
+F 1 "50" H 9100 4900 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 9030 4750 50  0001 C CNN
+F 3 "~" H 9100 4750 50  0001 C CNN
+	1    9100 4750
+	-1   0    0    1   
+$EndComp
+Text GLabel 9500 4950 3    50   Input ~ 0
+LED4
+Text GLabel 9300 4950 3    50   Input ~ 0
+LED3
+Text GLabel 9100 4950 3    50   Input ~ 0
+LED2
+Wire Wire Line
+	8900 4600 8900 4550
+Wire Wire Line
+	8900 4550 9100 4550
+Wire Wire Line
+	9500 4550 9500 4600
+Wire Wire Line
+	9300 4600 9300 4550
+Connection ~ 9300 4550
+Wire Wire Line
+	9300 4550 9500 4550
+Wire Wire Line
+	9100 4600 9100 4550
+Connection ~ 9100 4550
+Wire Wire Line
+	9100 4550 9200 4550
+Wire Wire Line
+	9200 4500 9200 4550
+Connection ~ 9200 4550
+Wire Wire Line
+	9200 4550 9300 4550
+Wire Notes Line
+	8050 3800 9700 3800
+Wire Notes Line
+	9700 3800 9700 5250
+Wire Notes Line
+	9700 5250 8050 5250
+Wire Notes Line
+	8050 5250 8050 3800
+Wire Wire Line
+	9200 4100 9200 4050
 $EndSCHEMATC
