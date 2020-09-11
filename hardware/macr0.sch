@@ -319,15 +319,15 @@ Wire Wire Line
 Connection ~ 2500 6850
 Wire Wire Line
 	2500 6850 2550 6850
-Text GLabel 1550 1150 0    50   Input ~ 0
+Text GLabel 2050 1150 2    50   Input ~ 0
 LED1
-Text GLabel 1550 1050 0    50   Input ~ 0
+Text GLabel 2050 1050 2    50   Input ~ 0
 KEY1
-Text GLabel 1550 1450 0    50   Input ~ 0
+Text GLabel 2050 1450 2    50   Input ~ 0
 KEY3
-Text GLabel 2350 1050 0    50   Input ~ 0
+Text GLabel 2850 1050 2    50   Input ~ 0
 KEY2
-Text GLabel 2350 1450 0    50   Input ~ 0
+Text GLabel 2850 1450 2    50   Input ~ 0
 KEY4
 Wire Wire Line
 	1600 1150 1550 1150
@@ -370,7 +370,7 @@ F 3 "~" H 2600 1850 50  0001 C CNN
 	1    2600 1550
 	1    0    0    -1  
 $EndComp
-Text GLabel 1550 1550 0    50   Input ~ 0
+Text GLabel 2050 1550 2    50   Input ~ 0
 LED3
 Wire Wire Line
 	1600 1550 1550 1550
@@ -628,7 +628,7 @@ Text Notes 8200 1550 0    50   ~ 0
 AVR In-System Programmer
 Text Notes 8150 3950 0    50   ~ 0
 LED Driver
-Text Notes 1300 850  0    50   ~ 0
+Text Notes 1450 850  0    50   ~ 0
 Key Switches with LEDs
 Text Notes 1150 2900 0    50   ~ 0
 ATmega32U4 AVR Microcontroller
@@ -702,42 +702,10 @@ Text Notes 7000 7050 0    79   ~ 0
 Rev 2 Changes:\n- No key matrix - each key connected directly to a gpio pin.\n- No LED driver, instead LEDs controlled via PWM and transistor.\n- Removed external pull-up from dimmer push-button.
 Wire Wire Line
 	3150 3500 3250 3500
-Text GLabel 2350 1550 0    50   Input ~ 0
+Text GLabel 2850 1550 2    50   Input ~ 0
 LED4
-Text GLabel 2350 1150 0    50   Input ~ 0
+Text GLabel 2850 1150 2    50   Input ~ 0
 LED2
-Wire Wire Line
-	2000 1050 2050 1050
-Wire Wire Line
-	2050 1050 2050 1150
-Wire Wire Line
-	2050 1550 2000 1550
-Wire Wire Line
-	2000 1450 2050 1450
-Wire Wire Line
-	2050 1450 2050 1550
-Wire Wire Line
-	2000 1150 2050 1150
-Wire Wire Line
-	2050 1150 2050 1450
-Connection ~ 2050 1150
-Connection ~ 2050 1450
-Wire Wire Line
-	2800 1050 2850 1050
-Wire Wire Line
-	2850 1050 2850 1150
-Wire Wire Line
-	2850 1550 2800 1550
-Wire Wire Line
-	2800 1450 2850 1450
-Connection ~ 2850 1450
-Wire Wire Line
-	2850 1450 2850 1550
-Wire Wire Line
-	2800 1150 2850 1150
-Connection ~ 2850 1150
-Wire Wire Line
-	2850 1150 2850 1450
 Wire Wire Line
 	2400 1150 2350 1150
 Wire Wire Line
@@ -745,25 +713,14 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0107
 U 1 1 5F5DA959
-P 2850 1600
-F 0 "#PWR0107" H 2850 1350 50  0001 C CNN
-F 1 "GND" H 2850 1450 50  0000 C CNN
-F 2 "" H 2850 1600 50  0001 C CNN
-F 3 "" H 2850 1600 50  0001 C CNN
-	1    2850 1600
+P 1550 1700
+F 0 "#PWR0107" H 1550 1450 50  0001 C CNN
+F 1 "GND" H 1550 1550 50  0000 C CNN
+F 2 "" H 1550 1700 50  0001 C CNN
+F 3 "" H 1550 1700 50  0001 C CNN
+	1    1550 1700
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2850 1600 2850 1550
-Connection ~ 2850 1550
-Wire Notes Line
-	1250 750  1250 1800
-Wire Notes Line
-	1250 1800 2950 1800
-Wire Notes Line
-	2950 1800 2950 750 
-Wire Notes Line
-	2950 750  1250 750 
 $Comp
 L Device:Q_PNP_BCE Q1
 U 1 1 5F5F3472
@@ -877,4 +834,55 @@ Wire Notes Line
 	8050 5250 8050 3800
 Wire Wire Line
 	9200 4100 9200 4050
+Wire Wire Line
+	2350 1050 2350 1150
+Wire Wire Line
+	2350 1150 2350 1450
+Connection ~ 2350 1150
+Wire Wire Line
+	2350 1450 2350 1550
+Connection ~ 2350 1450
+Wire Wire Line
+	2350 1550 2350 1650
+Wire Wire Line
+	2350 1650 1550 1650
+Wire Wire Line
+	1550 1650 1550 1550
+Connection ~ 2350 1550
+Wire Wire Line
+	1550 1550 1550 1450
+Connection ~ 1550 1550
+Wire Wire Line
+	1550 1450 1550 1150
+Connection ~ 1550 1450
+Wire Wire Line
+	1550 1150 1550 1050
+Connection ~ 1550 1150
+Wire Wire Line
+	2000 1050 2050 1050
+Wire Wire Line
+	2050 1150 2000 1150
+Wire Wire Line
+	2050 1450 2000 1450
+Wire Wire Line
+	2000 1550 2050 1550
+Wire Wire Line
+	2800 1550 2850 1550
+Wire Wire Line
+	2850 1450 2800 1450
+Wire Wire Line
+	2800 1150 2850 1150
+Wire Wire Line
+	2850 1050 2800 1050
+Wire Wire Line
+	1550 1700 1550 1650
+Connection ~ 1550 1650
+Wire Notes Line
+	1400 750  3150 750 
+Wire Notes Line
+	3150 750  3150 1900
+Wire Notes Line
+	3150 1900 1400 1900
+Wire Notes Line
+	1400 1900 1400 750 
 $EndSCHEMATC
