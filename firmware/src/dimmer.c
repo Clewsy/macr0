@@ -4,7 +4,7 @@
 void dimmer_init(void)
 {
 	DIMMER_DDR &= ~(1 << DIMMER_BUTTON);	// Set button pin as input.
-//	DIMMER_PORT |= (1 << DIMMER_BUTTON);	// Enable internal pull-ups.
+	DIMMER_PORT |= (1 << DIMMER_BUTTON);	// Enable internal pull-ups.
 	DIMMER_PCMSK |= (1 << DIMMER_PCINT);	// Enable pin-change interrupt for selected pin.
 
 	dimmer_enable();			// Enable the dimmer button.

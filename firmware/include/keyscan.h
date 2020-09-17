@@ -1,19 +1,16 @@
 #include <avr/io.h>
-//#include <LUFA/Drivers/USB/USB.h>	// Included for the scancode definitions.
-#include <string.h>			// Included for memset function.
+#include <string.h>		// Included for memset function.
 #include "keymap.h"
 
-#define KEYS_PORT	PORTD		// Hardware Port definition for controlling scan rows.
-#define KEYS_PINS	PIND		// Hardware Pins definition for reading column rows.
-#define KEYS_DDR	DDRD		// Hardware data direction register.
-#define ROW_1		PD0		// Pin connected to the first row.
-#define ROW_2		PD1		// Pin connected to the second row.
-#define COL_1		PD2		// Pin connected to the first column.
-#define COL_2		PD3		// Pin connected to the second column.
-#define ROW_ARRAY	{ROW_1, ROW_2}	// Array of row pins.
-#define COL_ARRAY	{COL_1, COL_2}	// Array of column pins.
-
-#define MAX_KEYS	6		// Max number of simultaneous key-presses (excluding media keys and modifiers).
+#define KEYS_PORT	PORTD	// Hardware Port definition for setting pull-ups.
+#define KEYS_PINS	PIND	// Hardware Pins definition for reading keys.
+#define KEYS_DDR	DDRD	// Hardware data direction register.
+#define KEY_1		PD0	// Pin connected to the first key.
+#define KEY_2		PD1	// Pin connected to the second key.
+#define KEY_3		PD2	// Pin connected to the third key.
+#define KEY_4		PD3	// Pin connected to the fourth key.
+#define MAX_KEYS	6	// Max number of simultaneous key-presses (excluding media keys and modifiers).
+#define KEY_ARRAY	{KEY_1, KEY_2, KEY_3, KEY_4}	// An array of pins to scan through.
 
 // Bit-shift definitions for the uint16_t media_keys integer:
 #define MK_PLAY		 0
@@ -28,7 +25,7 @@
 #define MK_VOL_UP	 9
 #define MK_VOL_DOWN	10
 
-// clewsy: Type define for a keyscan report which contains data identifying any current keypresses.
+// Type define for a keyscan report which contains data identifying any current keypresses.
 // See comments below for a breakdown of this struct.
 typedef struct
 {

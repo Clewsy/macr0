@@ -2,21 +2,23 @@
 
 // This interrupt sub-routine is trigerred when the dimmer/brightness button is pressed.
 // Pressing the button cycles the pwm duty cycle through various values, effectively stepping through various brigntness values of the LEDs.
+// Note the PWM signal controls a PNP transistor on the anode side of the LEDs, therefore duty cycle 255 = off and duty cycle 0 = full brightness.
 ISR(DIMMER_PCI_VECTOR)
 {
 	_delay_ms(DEBOUNCE_MS);	// Button de-bounce.
 
 	if(dimmer_check())	// If the button is still pressed (i.e. not a bounce or a release).
 	{
-		if(cat4104_get() == 250)	cat4104_set(0);
-		else				cat4104_set(cat4104_get() + 50);
+		// PWM value ranges from 5 to 255 in multiples of 25.
+		if(leds_get() == 255)	leds_set(5);
+		else			leds_set(leds_get() + 25);
 	}
 }
 
 // Initialise the hardware peripherals.
 void hardware_init(void)
 {
-	cat4104_init();
+	leds_init();
 	dimmer_init();
 	keyscan_init();
 
@@ -24,14 +26,13 @@ void hardware_init(void)
 }
 
 
-// Main program entry point. This routine configures the hardware required by the application, then enters a loop to run the application tasks in sequence.
+// Main program entry point.
  int main(void)
 {
 	hardware_init();
-//	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 
-	for (;;)
+	while(true)
 	{
 		HID_Task();	// In Keyboard.c
 		USB_USBTask();	// In the lufa library.

@@ -3,13 +3,9 @@
 // Initialise the gpio for scanning rows and columns.
 void keyscan_init(void)
 {
-	// Set rows as outputs and initialise all as high (disabled).
-	KEYS_DDR |= ((1 << ROW_1) | (1 << ROW_2));
-	KEYS_PORT |= ((1 << ROW_1) | (1 << ROW_2));
-
-	// Set columns as inputs and enable pull-ups.
-	KEYS_DDR &= ~((1 << COL_1) | (1 << COL_2));
-	KEYS_PORT |= ((1 << COL_1) | (1 << COL_2));
+	// Set keys as inputs and enable pull-ups.
+	KEYS_DDR &= ~((1 << KEY_1) | (1 << KEY_2) | (1 << KEY_3) | (1 << KEY_4));
+	KEYS_PORT |= ((1 << KEY_1) | (1 << KEY_2) | (1 << KEY_3) | (1 << KEY_4));
 }
 
 // Parse the detected key and update the appropriate part of the report struct.
@@ -32,7 +28,7 @@ void handle_key(char key, keyscan_report_t *keyscan_report)
 		key -= HID_KEYBOARD_SC_LEFT_CONTROL;
 
 		// Shift a bit to the corresponding bit within the modifier integer.
-		keyscan_report->modifier |= (1 << key);		
+		keyscan_report->modifier |= (1 << key);
 	}
 
 	// Regular keys scan values range from 0x00 to 0x65.
@@ -53,30 +49,16 @@ void create_keyscan_report(keyscan_report_t *keyscan_report)
 	memset(keyscan_report, 0, sizeof(keyscan_report_t));
 
 	// Define the pins to scan through.
-	uint8_t row_array[2] = ROW_ARRAY;
-	uint8_t col_array[2] = COL_ARRAY;
+	uint8_t key_array[NUM_KEYS] = KEY_ARRAY;
 
-	// Loop through for each row.
-	for(uint8_t r = 0; r < sizeof(row_array); r++)
+	// Loop through for each key.
+	for(uint8_t k = 0; k < sizeof(key_array); k++)
 	{
-		// Set low current row (enable check).
-		KEYS_PORT &= ~(1 << row_array[r]);
-
-		// Wait until row is set low before continuing, otherwise column checks can be missed.
-		while(!(~KEYS_PINS & (1 << row_array[r]))) {}
-
-		// Loop through for each column in the current row.
-		for(uint8_t c = 0; c < sizeof(col_array); c++)
+		// If the current key k is pressed.
+		if(~KEYS_PINS & (1 << key_array[k]))
 		{
-			// If the button in the current row and column is pressed, handle it.
-			if(~KEYS_PINS & (1 << col_array[c]))
-			{
-				handle_key(pgm_read_byte(&KEYMAP[r][c]), keyscan_report);
-			}
+			handle_key(pgm_read_byte(&KEYMAP[k]), keyscan_report);
 		}
-
-		// Set high current row (disable check).
-		KEYS_PORT |= (1 << row_array[r]);
 	}
 
 }

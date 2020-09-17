@@ -1,10 +1,9 @@
 #include <avr/pgmspace.h>	// Required for writing to and reading from program memory space.
 
-#define NUM_ROWS 2	// Number of rows to scan.
-#define NUM_COLS 2	// Number of columns to scan.
+#define NUM_KEYS 4		// Number of keys to scan.
 
 // Declare the keymap array.
-const char KEYMAP[NUM_ROWS][NUM_COLS];
+const char KEYMAP[NUM_KEYS];
 
 // Key scan-codes:
 // Note these are defined in the lufa library file LUFA/Drivers/USB/Class/Common/HIDClassCommon.h but repeated again
