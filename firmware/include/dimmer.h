@@ -12,7 +12,7 @@
 #define DIMMER_PCI_VECTOR	PCINT0_vect	// Pin-change Interrupt sub-routine vector.
 #define DIMMER_BUTTON		PB0		// PB0 is also PCINT0 - Pin Change Interrupt Pin 0
 
-// Function prototypes.
+// Function declarations.
 void dimmer_init(void);
 void dimmer_enable(void);
 void dimmer_disable(void);
