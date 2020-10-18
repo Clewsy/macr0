@@ -472,7 +472,7 @@ void HID_Task(void)
 	if (USB_DeviceState != DEVICE_STATE_Configured) return;
 
 	// clewsy: Check for and action any key presses designated as macros.
-	SendMacroReports(scan_macro_keys());
+	if(NUM_MACROS)	SendMacroReports(scan_macro_keys());
 
 	// clewsy: Update the keyscan report - will be used for creating both the keyboard and media controller reports.
 	create_keyscan_report(&keyscan_report);
