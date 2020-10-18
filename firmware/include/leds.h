@@ -55,21 +55,19 @@
 #define START_MODE	10					// The led mode at start-up.
 
 // Declarations:
-uint8_t led_mode;
-int8_t led_pulse_direction;
+struct mode
+{
+	uint8_t initial_brightness;
+	uint16_t pulse_speed;
+};
 void leds_init(void);
 void leds_pwm_set(uint8_t duty);
 uint8_t leds_pwm_get(void);
 void leds_pulse_enable(bool enable);
+void leds_pulse_speed_set(uint16_t speed);
 void leds_set_mode(uint8_t mode);
 void leds_handle_pulser_interrupt(void);
 void leds_change_mode(void);
 void leds_button_enable(bool enable);
 bool leds_button_state(void);
 void leds_handle_button_interrupt(void);
-
-struct mode
-{
-	uint8_t initial_brightness;
-	uint16_t pulse_speed;
-};
