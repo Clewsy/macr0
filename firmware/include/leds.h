@@ -14,7 +14,6 @@
 #define BUTTON_PCI_VECTOR	PCINT0_vect	// Pin-change Interrupt sub-routine vector.
 #define BUTTON_DEBOUNCE_MS	40		// Button de-bounce duration in milliseconds.
 
-
 // Definitions used for initiatilising and controling the pwm output pin. 
 #define PWM_PIN		PC7	// The pin to which the PWM signal will be connected.
 #define PWM_PORT	PORTC	// The port register that includes the pwm pin.
@@ -52,7 +51,7 @@
 
 // Mode definitions.
 #define NUM_MODES	(sizeof(modes) / sizeof modes[0])	// Macro for returning the total number of modes.
-#define START_MODE	10					// The led mode at start-up.
+#define START_MODE	1					// The led mode at start-up.
 
 // Declarations:
 struct mode
