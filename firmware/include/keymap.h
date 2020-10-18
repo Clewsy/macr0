@@ -1,9 +1,18 @@
 #include <avr/pgmspace.h>	// Required for writing to and reading from program memory space.
 
-#define NUM_KEYS 4		// Number of keys to scan.
+#define NUM_KEYS 	2	// Number of regular keys.
+#define NUM_MACROS	2	// Number of macro keys.
+#define MAX_MACRO_CHARS 255	// Maximum number of sequential characters in a macro.
 
-// Declare the keymap array.
+//#define KEY_ARRAY	{KEY_1, KEY_2, KEY_3, KEY_4}	// An array of pins to scan through.
+//#define MACRO_ARRAY	{}
+#define KEY_ARRAY	{KEY_1, KEY_2}	// An array of pins to scan through.
+#define MACRO_ARRAY	{KEY_3, KEY_4}
+
+// Declare the keymap and macro arrays.
 const char KEYMAP[NUM_KEYS];
+const char MACROMAP[NUM_MACROS+1][MAX_MACRO_CHARS];
+
 
 // Key scan-codes:
 // Note these are defined in the lufa library file LUFA/Drivers/USB/Class/Common/HIDClassCommon.h but repeated again

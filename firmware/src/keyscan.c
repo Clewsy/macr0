@@ -49,7 +49,7 @@ void create_keyscan_report(keyscan_report_t *keyscan_report)
 	memset(keyscan_report, 0, sizeof(keyscan_report_t));
 
 	// Define the pins to scan through.
-	uint8_t key_array[NUM_KEYS] = KEY_ARRAY;
+	uint8_t key_array[] = KEY_ARRAY;
 
 	// Loop through for each key.
 	for(uint8_t k = 0; k < sizeof(key_array); k++)
@@ -61,4 +61,90 @@ void create_keyscan_report(keyscan_report_t *keyscan_report)
 		}
 	}
 
+}
+
+// Only the first detected macro will be registered.  I.e. simultaneous macro key-presses is not possible.
+const char *scan_macro_keys(void)
+{
+	// Define the pins to scan through.
+	uint8_t macro_array[] = MACRO_ARRAY;
+
+	// Loop through for each macro key.
+	for(uint8_t m = 0; m < sizeof(macro_array); m++)
+	{
+		// If the macro key m is pressed.
+		if(~KEYS_PINS & (1 << macro_array[m]))
+		{
+			return(&MACROMAP[m][0]);
+		}
+	}
+	return((&MACROMAP[2][0]));
+}
+
+// Converts a character to a keyboard scancode.
+uint8_t char_to_code(char key)
+{
+	switch (key)
+	{
+		case 'A' ... 'Z' :	return ((uint8_t)key - 61);
+		case 'a' ... 'z' :	return ((uint8_t)key - 93);
+		case '1' ... '9' :	return ((uint8_t)key - 19);
+		case '0' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
+		case '!' :		return (HID_KEYBOARD_SC_1_AND_EXCLAMATION);
+		case '@' :		return (HID_KEYBOARD_SC_2_AND_AT);
+		case '#' :		return (HID_KEYBOARD_SC_3_AND_HASHMARK);
+		case '$' :		return (HID_KEYBOARD_SC_4_AND_DOLLAR);
+		case '%' :		return (HID_KEYBOARD_SC_5_AND_PERCENTAGE);
+		case '^' :		return (HID_KEYBOARD_SC_6_AND_CARET);
+		case '&' :		return (HID_KEYBOARD_SC_7_AND_AMPERSAND);
+		case '*' :		return (HID_KEYBOARD_SC_8_AND_ASTERISK);
+		case '(' :		return (HID_KEYBOARD_SC_9_AND_OPENING_PARENTHESIS);
+		case ')' :		return (HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS);
+		case '\n':		return (HID_KEYBOARD_SC_ENTER);
+		case '\e':		return (HID_KEYBOARD_SC_ESCAPE);
+		case '\b':		return (HID_KEYBOARD_SC_BACKSPACE);
+		case '\t':		return (HID_KEYBOARD_SC_TAB);
+		case ' ' :		return (HID_KEYBOARD_SC_SPACE);
+		case '-' :
+		case '_' :		return (HID_KEYBOARD_SC_MINUS_AND_UNDERSCORE);
+		case '=' :
+		case '+' :		return (HID_KEYBOARD_SC_EQUAL_AND_PLUS);
+		case '[' :
+		case '{' :		return (HID_KEYBOARD_SC_OPENING_BRACKET_AND_OPENING_BRACE);
+		case ']' :
+		case '}' :		return (HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE);
+		case '\\':
+		case '|' :		return (HID_KEYBOARD_SC_BACKSLASH_AND_PIPE);
+		case ';' :
+		case ':' :		return (HID_KEYBOARD_SC_SEMICOLON_AND_COLON);
+		case '\'':
+		case '"' :		return (HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE);
+		case '`' :
+		case '~' :		return (HID_KEYBOARD_SC_GRAVE_ACCENT_AND_TILDE);
+		case ',' :
+		case '<' :		return (HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN);
+		case '.' :
+		case '>' :		return (HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN);
+		case '/' :
+		case '?' :		return (HID_KEYBOARD_SC_SLASH_AND_QUESTION_MARK);
+
+		default :		return (0x00);	//If there is no character match "fail" by sending a NO_KEY code.
+	}
+}
+
+// Determines if a shift modifier is required to reproduce a character.
+bool upper_case_check(char key)
+{
+	switch (key)
+	{
+		case '!' ... '&' :
+		case '(' ... '+' :
+		case ':' :
+		case '<' :
+		case '>' ... 'Z' :
+		case '^' ... '_' :
+		case '{' ... '~' :	return true;
+
+		default :		return false;
+	}
 }

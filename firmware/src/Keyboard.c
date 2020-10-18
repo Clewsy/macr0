@@ -276,6 +276,17 @@ void CreateMediaControllerReport(USB_MediaControllerReport_Data_t* const MediaRe
 	MediaReportData->VolumeDown	= (keyscan_report.media_keys & (1 << MK_VOL_DOWN)	? true : false);
 }
 
+// clewsy: Similar to CreateKeyboardReport() function but creates a report for a single specific keypress.
+void CreateMacroKeyReport(USB_KeyboardReport_Data_t* const ReportData, char key_code, bool upper_case)
+{
+	// Clear the report contents.
+	memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
+
+	if(upper_case == true)	ReportData->Modifier = 0b00000010;	// Apply left shift key.
+
+	ReportData->KeyCode[0] = key_code;
+}
+
 // Processes a received LED report, and updates the board LEDs states to match.
 // LEDReport: LED status report from the host.
 // clewsy: Commented for now, may remove completely depending on how I decide to control LEDs on the custom board.
@@ -406,12 +417,62 @@ void ReceiveNextKeyboardReport(void)
 	}
 }
 
+// clewsy: Send the multiple sequential reports that make up a define macro.
+void SendMacroReports(const char *macro_string)
+{
+	static const char *last_macro_string = "";	// Remember the last run macro.
+
+	if(last_macro_string != macro_string)	// Only if the macro has changed - prevents re-run if key held.
+//	if(pgm_read_byte(&macro_string[0]) != '\0')	// Only if the macro has changed - prevents re-run if key held.
+	{
+		uint8_t i = 0;
+		while(pgm_read_byte(&macro_string[i]) != '\0')
+//		for(uint8_t i = 0; i < (sizeof(macro_string) / sizeof(macro_string[0])); i++)
+		{
+			type_key(pgm_read_byte(&macro_string[i++]));
+			USB_USBTask();	// In the lufa library.
+		}
+		last_macro_string = macro_string;
+	}
+}
+
+// clewsy: effectivley send a keyboard report but for a single character. 
+void type_key(char key)
+{
+	SendNextMacroKeyReport(char_to_code(key), upper_case_check(key));
+	SendNextMacroKeyReport(0x00, false);	// Send a "no-key" after each actual char (i.e. release the key).
+}
+
+// clewsy: Similar to teh SendNextKeyboardReport() function, but types a single key (with or without modifiers).
+// Intended to be used sequentially to "type" a string of characters - i.e. a macro.
+void SendNextMacroKeyReport(uint8_t key_code, bool upper_case)
+{
+	USB_KeyboardReport_Data_t        MacroReportData;
+
+	// Create the next keyboard report for transmission to the host.
+	CreateMacroKeyReport(&MacroReportData, key_code, upper_case);
+
+	// Select the Keyboard Report Endpoint.
+	Endpoint_SelectEndpoint(KEYBOARD_IN_EPADDR);
+
+	// Wait until Keyboard Endpoint Ready for Read/Write.
+	while(!Endpoint_IsReadWriteAllowed()) {}
+
+	// Write Keyboard Report Data.
+	Endpoint_Write_Stream_LE(&MacroReportData, sizeof(MacroReportData), NULL);
+
+	// Finalize the stream transfer to send the last packet.
+	Endpoint_ClearIN();
+}
+
 // Function to manage HID report generation and transmission to the host, when in report mode.
 void HID_Task(void)
 {
 	// Device must be connected and configured for the task to run.
-	if (USB_DeviceState != DEVICE_STATE_Configured)
-	  return;
+	if (USB_DeviceState != DEVICE_STATE_Configured) return;
+
+	// clewsy: Check for and action any key presses designated as macros.
+	SendMacroReports(scan_macro_keys());
 
 	// clewsy: Update the keyscan report - will be used for creating both the keyboard and media controller reports.
 	create_keyscan_report(&keyscan_report);
@@ -424,5 +485,4 @@ void HID_Task(void)
 
 	// clewsy: Send the next media controller keypress report to the host.
 	SendNextMediaControllerReport();
-
 }

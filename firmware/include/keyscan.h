@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <string.h>		// Included for memset function.
+#include <stdbool.h>		// Included yo use bool type and true/false values.
 #include "keymap.h"
 
 #define KEYS_PORT	PORTD	// Hardware Port definition for setting pull-ups.
@@ -10,7 +11,6 @@
 #define KEY_3		PD2	// Pin connected to the third key.
 #define KEY_4		PD3	// Pin connected to the fourth key.
 #define MAX_KEYS	6	// Max number of simultaneous key-presses (excluding media keys and modifiers).
-#define KEY_ARRAY	{KEY_1, KEY_2, KEY_3, KEY_4}	// An array of pins to scan through.
 
 // Bit-shift definitions for the uint16_t media_keys integer:
 #define MK_PLAY		 0
@@ -38,6 +38,9 @@ typedef struct
 void keyscan_init(void);
 void handle_key(char key, keyscan_report_t *keyscan_report);
 void create_keyscan_report(keyscan_report_t *keyscan_report);
+const char *scan_macro_keys(void);
+uint8_t char_to_code(char key);
+bool upper_case_check(char key);
 
 
 /* Breakdown of a keyscan_report:
