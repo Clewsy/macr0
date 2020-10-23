@@ -55,6 +55,7 @@
 	// clewsy: keyscan.h and .c files written for specific use-case, custom board.
 	#include "keyscan.h"
 
+	// Needed to prevent double key-presses.  Small number of keys means key-scanning happens a bit too quickly.
 	#define DEBOUNCE_MS	2
 
 	// Type Defines:
