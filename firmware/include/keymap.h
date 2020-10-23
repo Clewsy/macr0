@@ -1,10 +1,5 @@
 #include <avr/pgmspace.h>	// Required for writing to and reading from program memory space.
 
-//#define NUM_KEYS 	4				// Number of regular keys.
-//#define KEY_ARRAY	{KEY_1, KEY_2, KEY_3, KEY_4}	// An array of pins to scan through for key strokes.
-//#define NUM_MACROS	0				// Number of macro keys.
-//#define MACRO_ARRAY	{}				// An array of pins to scan through for macros.
-
 #define KEY_1	PD0	// Pin connected to the first key.
 #define KEY_2	PD1	// Pin connected to the second key.
 #define KEY_3	PD2	// Pin connected to the third key.

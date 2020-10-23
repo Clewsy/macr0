@@ -21,8 +21,6 @@
 #define MK_VOL_UP	 9
 #define MK_VOL_DOWN	10
 
-//const char NO_MACRO[1];		// Empty array sent when no macro pressed.
-
 // Type define for a keyscan report which contains data identifying any current keypresses.
 // See comments below for a breakdown of this struct.
 typedef struct
