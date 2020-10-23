@@ -347,6 +347,8 @@ void SendNextKeyboardReport(void)
 		// Finalize the stream transfer to send the last packet.
 		Endpoint_ClearIN();
 	}
+_delay_ms(DEBOUNCE_MS);	//Dirty delay to prevent button bounce registering as a double-press.
+
 }
 
 
@@ -472,7 +474,9 @@ void HID_Task(void)
 	if (USB_DeviceState != DEVICE_STATE_Configured) return;
 
 	// clewsy: Check for and action any key presses designated as macros.
-	if(NUM_MACROS)	SendMacroReports(scan_macro_keys());
+//	if(sizeof(MACRO_MAP))	SendMacroReports(scan_macro_keys());
+//	if(sizeof(MACRO_MAP) > 1)	type_key('f');
+SendMacroReports(scan_macro_keys());
 
 	// clewsy: Update the keyscan report - will be used for creating both the keyboard and media controller reports.
 	create_keyscan_report(&keyscan_report);

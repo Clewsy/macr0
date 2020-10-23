@@ -54,6 +54,9 @@
 
 	// clewsy: keyscan.h and .c files written for specific use-case, custom board.
 	#include "keyscan.h"
+
+	#define DEBOUNCE_MS	2
+
 	// Type Defines:
 	// clewsy: Type define for a Media Control HID report. This report contains the bits to match the usages defined
 	// in the HID report of the device.  When set to a true, the relevant media controls on the host will be

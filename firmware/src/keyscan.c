@@ -48,37 +48,31 @@ void create_keyscan_report(keyscan_report_t *keyscan_report)
 	// Start with a blank keyscan report.
 	memset(keyscan_report, 0, sizeof(keyscan_report_t));
 
-	// Define the pins to scan through.
-	uint8_t key_array[] = KEY_ARRAY;
-
 	// Loop through for each key.
-	for(uint8_t k = 0; k < sizeof(key_array); k++)
+	for(uint8_t k = 0; k < sizeof(KEY_PIN_ARRAY); k++)
 	{
 		// If the current key k is pressed.
-		if(~KEYS_PINS & (1 << key_array[k]))
+		if(~KEYS_PINS & (1 << KEY_PIN_ARRAY[k]))
 		{
-			handle_key(pgm_read_byte(&KEYMAP[k]), keyscan_report);
+			handle_key(pgm_read_byte(&KEY_MAP[k]), keyscan_report);
 		}
 	}
-
 }
 
-// Only the first detected macro will be registered.  I.e. simultaneous macro key-presses is not possible.
+// Returns the address of a macro, i.e. first character in a string to be "typed".
+// Note: only the first detected macro will be registered.  I.e. simultaneous macro key-presses is not possible.
 const char *scan_macro_keys(void)
 {
-	// Define the pins to scan through.
-	uint8_t macro_array[] = MACRO_ARRAY;
+
+	static const char NO_MACRO[] PROGMEM = "";	// Needed when no macro key is pressed.
 
 	// Loop through for each macro key.
-	for(uint8_t m = 0; m < sizeof(macro_array); m++)
+	for(uint8_t m = 0; m < sizeof(MACRO_PIN_ARRAY); m++)
 	{
-		// If the macro key m is pressed.
-		if(~KEYS_PINS & (1 << macro_array[m]))
-		{
-			return(&MACROMAP[m][0]);
-		}
+		// If the macro key m is pressed, return the address of the macro string mapped in "keymap.c".
+		if(~KEYS_PINS & (1 << MACRO_PIN_ARRAY[m])) return(&MACRO_MAP[m][0]);
 	}
-	return((&MACROMAP[2][0]));
+	return(&NO_MACRO[0]);	// Return the address of a blank array when no macro key is pressed.
 }
 
 // Converts a character to a keyboard scancode.
@@ -128,7 +122,7 @@ uint8_t char_to_code(char key)
 		case '/' :
 		case '?' :		return (HID_KEYBOARD_SC_SLASH_AND_QUESTION_MARK);
 
-		default :		return (0x00);	//If there is no character match "fail" by sending a NO_KEY code.
+		default :		return (0x00);	//If there is no character match "fail" by sending a "NO_KEY".
 	}
 }
 

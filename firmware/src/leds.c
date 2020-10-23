@@ -7,7 +7,7 @@
 //			that changes the PWM value.  0 to 65535.  Set to zero for no pulse effect.
 const struct mode modes[] = 
 {
-	{ .initial_brightness = 255, 	.pulse_speed = 0},	// Mode 00
+	{ .initial_brightness = 255, 	.pulse_speed = 0},	// Mode 00 - Off.
 	{ .initial_brightness = 254, 	.pulse_speed = 0},	// Mode 01
 	{ .initial_brightness = 253, 	.pulse_speed = 0},	// Mode 02
 	{ .initial_brightness = 251, 	.pulse_speed = 0},	// Mode 03
@@ -16,10 +16,10 @@ const struct mode modes[] =
 	{ .initial_brightness = 223, 	.pulse_speed = 0},	// Mode 06
 	{ .initial_brightness = 191, 	.pulse_speed = 0},	// Mode 07
 	{ .initial_brightness = 127, 	.pulse_speed = 0},	// Mode 08
-	{ .initial_brightness = 0, 	.pulse_speed = 0},	// Mode 09
-	{ .initial_brightness = 0, 	.pulse_speed = 2000},	// Mode 10
-	{ .initial_brightness = 0, 	.pulse_speed = 8000},	// Mode 11
-	{ .initial_brightness = 0, 	.pulse_speed = 32000},	// Mode 12
+	{ .initial_brightness = 0, 	.pulse_speed = 0},	// Mode 09 - Max brightness.
+	{ .initial_brightness = 0, 	.pulse_speed = 2000},	// Mode 10 - Fast pulse.
+	{ .initial_brightness = 0, 	.pulse_speed = 8000},	// Mode 11 - Medium pulse.
+	{ .initial_brightness = 0, 	.pulse_speed = 32000},	// Mode 12 - Slow pulse.
 };
 
 // Initialise the AVR registers for controlling the LEDs.

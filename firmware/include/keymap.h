@@ -1,21 +1,23 @@
 #include <avr/pgmspace.h>	// Required for writing to and reading from program memory space.
 
-#define NUM_KEYS 	4				// Number of regular keys.
-#define KEY_ARRAY	{KEY_1, KEY_2, KEY_3, KEY_4}	// An array of pins to scan through for key strokes.
-#define NUM_MACROS	0				// Number of macro keys.
-#define MACRO_ARRAY	{}				// An array of pins to scan through for macros.
+//#define NUM_KEYS 	4				// Number of regular keys.
+//#define KEY_ARRAY	{KEY_1, KEY_2, KEY_3, KEY_4}	// An array of pins to scan through for key strokes.
+//#define NUM_MACROS	0				// Number of macro keys.
+//#define MACRO_ARRAY	{}				// An array of pins to scan through for macros.
 
-//#define NUM_KEYS 	2
-//#define KEY_ARRAY	{KEY_1, KEY_2}
-//#define NUM_MACROS	2
-//#define MACRO_ARRAY	{KEY_3, KEY_4}
+#define KEY_1	PD0	// Pin connected to the first key.
+#define KEY_2	PD1	// Pin connected to the second key.
+#define KEY_3	PD2	// Pin connected to the third key.
+#define KEY_4	PD3	// Pin connected to the fourth key.
 
-#define MAX_MACRO_CHARS 255	// Maximum number of sequential characters in a macro.
+#define MAX_PHYSICAL_KEYS 	4	// Maximum number of physical keys to scan.
+#define MAX_MACRO_CHARS 	255	// Maximum number of sequential characters in a macro.
 
-// Declare the keymap and macro arrays.
-const char KEYMAP[NUM_KEYS];
-const char MACROMAP[NUM_MACROS+1][MAX_MACRO_CHARS];
-
+// Declare the key-to-pin, macro-to-pin, keymap and macromap arrays.
+const uint8_t KEY_PIN_ARRAY[MAX_PHYSICAL_KEYS];			// Array defines which pins should be keystrokes.
+const uint8_t MACRO_PIN_ARRAY[MAX_PHYSICAL_KEYS];		// Array defines which pins should be macros.
+const char KEY_MAP[MAX_PHYSICAL_KEYS];				// Array maps key (pin) to a keyscan code.
+const char MACRO_MAP[MAX_PHYSICAL_KEYS][MAX_MACRO_CHARS];	// Array maps key (pin) to a macro.
 
 // Key scan-codes:
 // Note these are defined in the lufa library file LUFA/Drivers/USB/Class/Common/HIDClassCommon.h but repeated again

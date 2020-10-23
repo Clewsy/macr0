@@ -6,10 +6,6 @@
 #define KEYS_PORT	PORTD	// Hardware Port definition for setting pull-ups.
 #define KEYS_PINS	PIND	// Hardware Pins definition for reading keys.
 #define KEYS_DDR	DDRD	// Hardware data direction register.
-#define KEY_1		PD0	// Pin connected to the first key.
-#define KEY_2		PD1	// Pin connected to the second key.
-#define KEY_3		PD2	// Pin connected to the third key.
-#define KEY_4		PD3	// Pin connected to the fourth key.
 #define MAX_KEYS	6	// Max number of simultaneous key-presses (excluding media keys and modifiers).
 
 // Bit-shift definitions for the uint16_t media_keys integer:
@@ -24,6 +20,8 @@
 #define MK_MUTE		 8
 #define MK_VOL_UP	 9
 #define MK_VOL_DOWN	10
+
+//const char NO_MACRO[1];		// Empty array sent when no macro pressed.
 
 // Type define for a keyscan report which contains data identifying any current keypresses.
 // See comments below for a breakdown of this struct.
