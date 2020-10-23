@@ -426,11 +426,9 @@ void SendMacroReports(const char *macro_string)
 	static const char *last_macro_string = "";	// Remember the last run macro.
 
 	if(last_macro_string != macro_string)	// Only if the macro has changed - prevents re-run if key held.
-//	if(pgm_read_byte(&macro_string[0]) != '\0')	// Only if the macro has changed - prevents re-run if key held.
 	{
 		uint8_t i = 0;
 		while(pgm_read_byte(&macro_string[i]) != '\0')
-//		for(uint8_t i = 0; i < (sizeof(macro_string) / sizeof(macro_string[0])); i++)
 		{
 			type_key(pgm_read_byte(&macro_string[i++]));
 			USB_USBTask();	// In the lufa library.
