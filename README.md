@@ -11,7 +11,7 @@ Goals for this project:
 - [X] Back-light illumination will be adjustable.
 - [X] Connectivity (and power) will be via a USC-C connector, configured for USB 2.0.
 
-![The completed macr- keypad.][image_macr0]
+![The completed macr0 keypad.][image_macr0]
 
 [link_clews_macr0]:https://clews.pro/projects/macr0.php
 
