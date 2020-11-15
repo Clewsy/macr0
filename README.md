@@ -2,8 +2,6 @@
 
 4-button HID compliant USB macro keypad.
 
-This is a test project to try out a few things before attempting a larger-scale project.  Some proofs of concepts - things I haven't done before.
-
 A bunch of extra info can be found at [clews.pro][link_clews_macr0].
 
 Goals for this project:
