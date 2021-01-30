@@ -1,10 +1,10 @@
 #include "leds.h"
 
 // Each "mode" is defined by a uint8_t for brightness and a uint16_t for pulse speed.
-// initial_brightness:	The PWM value to send to the LEDs before setting the pulse speed, 0 to 255.
-//			Note, the LEDs are active low, so full brightness requires a value of 0xFF.
-// pulse_speed:		When the pulse timer counter reaches this value, an interrupt is triggered
-//			that changes the PWM value.  0 to 65535.  Set to zero for no pulse effect.
+// initial_brightness:	The PWM value to send to the LEDs before setting the pulse speed.  Note, the LEDs are active low, so full
+//			brightness requires a value of 0xFF.  Range is 0 to 255 (0x00 to 0xFF).
+// pulse_speed:		When the pulse timer counter reaches this value, an interrupt is triggered that changes the PWM value.
+//			Set to zero for no pulse effect.  Range is 0 to 65535 (0x0000 to 0xFFFF).
 const struct mode modes[] = 
 {
 	{ .initial_brightness = 255, 	.pulse_speed = 0},	// Mode 00 - Off.
@@ -41,7 +41,7 @@ void leds_init(void)
 	PWM_TCCRB |= ((0 << PWM_CS3) | (1 << PWM_CS2) | (1 << PWM_CS1) | (1 << PWM_CS0));
 	PWM_DDR |= (1 << PWM_PIN);	// Set as an output the pin to which the LEDs transistor is connected.
 
-	////////Initialise the pulse timer.
+	////////Initialise the pulse effect timer.
 	// WGM[2:0] set to 0100 : CTC mode, counts from 0 to value of output compare register.
 	// COM[1:0] set to 00 : Normal pin modes - not connected to timer.
 	// CS[2:0] set to 010 : clk/8 (from prescaler).
@@ -124,13 +124,4 @@ bool leds_button_state(void)
 {
 	if(~BUTTON_PINS & (1 << BUTTON_PIN))	return(true);
 	else					return(false);
-}
-
-void leds_handle_button_interrupt(void)
-{
-	// Button de-bounce.
-	_delay_ms(BUTTON_DEBOUNCE_MS);
-
-	// If the button is still pressed (i.e. not a bounce or a release), change the mode.
-	if(leds_button_state()) leds_change_mode();
 }

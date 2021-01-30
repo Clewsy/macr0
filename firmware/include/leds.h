@@ -12,7 +12,7 @@
 #define BUTTON_PCIE		PCIE0		// Pin-change interrupt enable bit.
 #define BUTTON_PCINT		PCINT0		// Pin-change interrupt bit.
 #define BUTTON_PCI_VECTOR	PCINT0_vect	// Pin-change Interrupt sub-routine vector.
-#define BUTTON_DEBOUNCE_MS	40		// Button de-bounce duration in milliseconds.
+#define BUTTON_DEBOUNCE_MS	20		// Button de-bounce duration in milliseconds.
 
 // Definitions used for initiatilising and controling the pwm output pin. 
 #define PWM_PIN		PC7	// The pin to which the PWM signal will be connected.
@@ -69,4 +69,3 @@ void leds_handle_pulser_interrupt(void);
 void leds_change_mode(void);
 void leds_button_enable(bool enable);
 bool leds_button_state(void);
-void leds_handle_button_interrupt(void);
